@@ -1,6 +1,15 @@
 #include "interface.h"
 #include "ui_interface.h"
 #include "application.h"
+#include <QAction>
+#include <QLabel>
+#include <QMenu>
+#include <QDockWidget>
+#include <QStatusBar>
+#include <QToolBar>
+#include <QDir>
+#include <QFileInfo>
+#include <QTimer>
 
 Interface::Interface(QWidget *parent) :
     QMainWindow(parent),
@@ -21,7 +30,7 @@ Interface::Interface(QWidget *parent) :
     m_currentToolSelected = ui->toolNormal;
 
     // Main Scene
-    m_workarea = new WorkArea(this,ui->workArea);
+    m_workarea = new WorkArea(this, ui->workArea);
     ui->workArea->setScene(m_workarea);
 
     // configMark
@@ -42,90 +51,90 @@ Interface::Interface(QWidget *parent) :
      */
 
     // Tools
-    connect(ui->toolNormal,SIGNAL(triggered()),this,SLOT(tool_normal()));
-    connect(ui->toolZoomIn,SIGNAL(triggered()),this,SLOT(tool_zoomIn()));
-    connect(ui->toolZoomOut,SIGNAL(triggered()),this,SLOT(tool_zoomOut()));
-    connect(ui->toolCutRect,SIGNAL(triggered()),this,SLOT(tool_cutRect()));
-    connect(ui->toolCutGrid,SIGNAL(triggered()),this,SLOT(tool_cutGrid()));
-    connect(ui->toolMark,SIGNAL(triggered()),this,SLOT(tool_mark()));
-    connect(ui->toolPicker,SIGNAL(triggered()),this,SLOT(tool_picker()));
-    connect(ui->toolCutAuto,SIGNAL(triggered()),this,SLOT(tool_cutAuto()));
+    connect(ui->toolNormal, SIGNAL(triggered()), this, SLOT(tool_normal()));
+    connect(ui->toolZoomIn, SIGNAL(triggered()), this, SLOT(tool_zoomIn()));
+    connect(ui->toolZoomOut, SIGNAL(triggered()), this, SLOT(tool_zoomOut()));
+    connect(ui->toolCutRect, SIGNAL(triggered()), this, SLOT(tool_cutRect()));
+    connect(ui->toolCutGrid, SIGNAL(triggered()), this, SLOT(tool_cutGrid()));
+    connect(ui->toolMark, SIGNAL(triggered()), this, SLOT(tool_mark()));
+    connect(ui->toolPicker, SIGNAL(triggered()), this, SLOT(tool_picker()));
+    connect(ui->toolCutAuto, SIGNAL(triggered()), this, SLOT(tool_cutAuto()));
 
     // Menu
-    connect(ui->menuOpen,SIGNAL(triggered()),this,SLOT(menu_open()));
-    connect(ui->menuSave,SIGNAL(triggered()),this,SLOT(menu_save()));
-    connect(ui->menuSaveAs,SIGNAL(triggered()),this,SLOT(menu_saveAs()));
-    connect(ui->menuQuit,SIGNAL(triggered()),this,SLOT(menu_quit()));
-    connect(ui->menuAbout,SIGNAL(triggered()),this,SLOT(menu_about()));
+    connect(ui->menuOpen, SIGNAL(triggered()), this, SLOT(menu_open()));
+    connect(ui->menuSave, SIGNAL(triggered()), this, SLOT(menu_save()));
+    connect(ui->menuSaveAs, SIGNAL(triggered()), this, SLOT(menu_saveAs()));
+    connect(ui->menuQuit, SIGNAL(triggered()), this, SLOT(menu_quit()));
+    connect(ui->menuAbout, SIGNAL(triggered()), this, SLOT(menu_about()));
 
     // configCutRect
-    connect(ui->cutRect_I_Width,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemWidth(int)));
-    connect(ui->cutRect_I_Height,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemHeight(int)));
-    connect(ui->cutRect_I_X,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemX(int)));
-    connect(ui->cutRect_I_Y,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemY(int)));
-    connect(ui->cutRect_B_Add,SIGNAL(clicked()),this,SLOT(addCutRect()));
-    connect(ui->cutRect_I_Magnetism,SIGNAL(toggled(bool)),m_workarea,SLOT(toggledMagnet(bool)));
-    connect(ui->cutRect_B_Remove,SIGNAL(clicked()),m_workarea,SLOT(deleteSelection()));
+    connect(ui->cutRect_I_Width, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemWidth(int)));
+    connect(ui->cutRect_I_Height, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemHeight(int)));
+    connect(ui->cutRect_I_X, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemX(int)));
+    connect(ui->cutRect_I_Y, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemY(int)));
+    connect(ui->cutRect_B_Add, SIGNAL(clicked()), this, SLOT(addCutRect()));
+    connect(ui->cutRect_I_Magnetism, SIGNAL(toggled(bool)), m_workarea, SLOT(toggledMagnet(bool)));
+    connect(ui->cutRect_B_Remove, SIGNAL(clicked()), m_workarea, SLOT(deleteSelection()));
 
     // configCutGrid
-    connect(ui->cutGrid_I_Width,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemWidth(int)));
-    connect(ui->cutGrid_I_Height,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemHeight(int)));
-    connect(ui->cutGrid_I_X,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemX(int)));
-    connect(ui->cutGrid_I_Y,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemY(int)));
-    connect(ui->cutGrid_I_Row,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemRow(int)));
-    connect(ui->cutGrid_I_Column,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemColumn(int)));
-    connect(ui->cutGrid_B_Add,SIGNAL(clicked()),this,SLOT(addCutGrid()));
-    connect(ui->cutGrid_I_Magnetism,SIGNAL(toggled(bool)),m_workarea,SLOT(toggledMagnet(bool)));
-    connect(ui->cutGrid_B_Remove,SIGNAL(clicked()),m_workarea,SLOT(deleteSelection()));
-    connect(ui->cutGrid_I_CellHeight,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemCellHeight(int)));
-    connect(ui->cutGrid_I_CellWidth,SIGNAL(valueChanged(int)),m_workarea,SLOT(setItemCellWidth(int)));
+    connect(ui->cutGrid_I_Width, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemWidth(int)));
+    connect(ui->cutGrid_I_Height, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemHeight(int)));
+    connect(ui->cutGrid_I_X, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemX(int)));
+    connect(ui->cutGrid_I_Y, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemY(int)));
+    connect(ui->cutGrid_I_Row, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemRow(int)));
+    connect(ui->cutGrid_I_Column, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemColumn(int)));
+    connect(ui->cutGrid_B_Add, SIGNAL(clicked()), this, SLOT(addCutGrid()));
+    connect(ui->cutGrid_I_Magnetism, SIGNAL(toggled(bool)), m_workarea, SLOT(toggledMagnet(bool)));
+    connect(ui->cutGrid_B_Remove, SIGNAL(clicked()), m_workarea, SLOT(deleteSelection()));
+    connect(ui->cutGrid_I_CellHeight, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemCellHeight(int)));
+    connect(ui->cutGrid_I_CellWidth, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemCellWidth(int)));
 
     // Link configCutGrid & configCutRect
-    connect(ui->cutGrid_I_Magnetism,SIGNAL(toggled(bool)),ui->cutRect_I_Magnetism,SLOT(setChecked(bool)));
-    connect(ui->cutRect_I_Magnetism,SIGNAL(toggled(bool)),ui->cutGrid_I_Magnetism,SLOT(setChecked(bool)));
+    connect(ui->cutGrid_I_Magnetism, SIGNAL(toggled(bool)), ui->cutRect_I_Magnetism, SLOT(setChecked(bool)));
+    connect(ui->cutRect_I_Magnetism, SIGNAL(toggled(bool)), ui->cutGrid_I_Magnetism, SLOT(setChecked(bool)));
 
     // configCutAuto
-    connect(ui->cutAuto_I_Tolerance,SIGNAL(valueChanged(int)),m_workarea,SLOT(changeTolerance(int)));
-    connect(ui->cutAuto_I_ConstraintHeight,SIGNAL(toggled(bool)),m_workarea,SLOT(changeConstraintHeight(bool)));
-    connect(ui->cutAuto_I_ConstraintWidth,SIGNAL(toggled(bool)),m_workarea,SLOT(changeConstraintWidth(bool)));
+    connect(ui->cutAuto_I_Tolerance, SIGNAL(valueChanged(int)), m_workarea, SLOT(changeTolerance(int)));
+    connect(ui->cutAuto_I_ConstraintHeight, SIGNAL(toggled(bool)), m_workarea, SLOT(changeConstraintHeight(bool)));
+    connect(ui->cutAuto_I_ConstraintWidth, SIGNAL(toggled(bool)), m_workarea, SLOT(changeConstraintWidth(bool)));
 
     // configMark
-    connect(ui->mark_I_Orientation,SIGNAL(currentIndexChanged(int)),this,SLOT(mark_OrientationChange(int)));
-    connect(ui->mark_B_Add,SIGNAL(clicked()),this,SLOT(addMark()));
+    connect(ui->mark_I_Orientation, SIGNAL(currentIndexChanged(int)), this, SLOT(mark_OrientationChange(int)));
+    connect(ui->mark_B_Add, SIGNAL(clicked()), this, SLOT(addMark()));
 
     // configPicker
-    connect(ui->picker_B_ColorPicker,SIGNAL(clicked()),this,SLOT(picker_OpenColorPicker()));
-    connect(ui->picker_B_Valid,SIGNAL(clicked()),this,SLOT(picker_SetMaskColor()));
+    connect(ui->picker_B_ColorPicker, SIGNAL(clicked()), this, SLOT(picker_OpenColorPicker()));
+    connect(ui->picker_B_Valid, SIGNAL(clicked()), this, SLOT(picker_SetMaskColor()));
 
     // Viewer
-    connect(ui->viewer_I_ZoomIn,SIGNAL(clicked()),this,SLOT(viewer_zoomIn()));
-    connect(ui->viewer_I_ZoomOut,SIGNAL(clicked()),this,SLOT(viewer_zoomOut()));
+    connect(ui->viewer_I_ZoomIn, SIGNAL(clicked()), this, SLOT(viewer_zoomIn()));
+    connect(ui->viewer_I_ZoomOut, SIGNAL(clicked()), this, SLOT(viewer_zoomOut()));
 
     // Animation Panel
-    connect(ui->animation_I_Add,SIGNAL(clicked()),this,SLOT(animation_add()));
-    connect(ui->animation_I_Remove,SIGNAL(clicked()),this,SLOT(animation_remove()));
-    connect(ui->animation_I_List,SIGNAL(currentIndexChanged(int)),this,SLOT(selectAnimation(int)));
-    connect(ui->animation_I_Title,SIGNAL(textChanged(QString)),this,SLOT(animation_changeTitle(QString)));
+    connect(ui->animation_I_Add, SIGNAL(clicked()), this, SLOT(animation_add()));
+    connect(ui->animation_I_Remove, SIGNAL(clicked()), this, SLOT(animation_remove()));
+    connect(ui->animation_I_List, SIGNAL(currentIndexChanged(int)), this, SLOT(selectAnimation(int)));
+    connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), this, SLOT(animation_changeTitle(QString)));
 
     // Alignements
-    connect(ui->align_sceneLeft,SIGNAL(clicked()),m_workarea,SLOT(alignLeft()));
-    connect(ui->align_sceneRight,SIGNAL(clicked()),m_workarea,SLOT(alignRight()));
-    connect(ui->align_sceneCenterH,SIGNAL(clicked()),m_workarea,SLOT(alignCenterH()));
-    connect(ui->align_sceneTop,SIGNAL(clicked()),m_workarea,SLOT(alignTop()));
-    connect(ui->align_sceneBottom,SIGNAL(clicked()),m_workarea,SLOT(alignBottom()));
-    connect(ui->align_sceneCenterV,SIGNAL(clicked()),m_workarea,SLOT(alignCenterV()));
+    connect(ui->align_sceneLeft, SIGNAL(clicked()), m_workarea, SLOT(alignLeft()));
+    connect(ui->align_sceneRight, SIGNAL(clicked()), m_workarea, SLOT(alignRight()));
+    connect(ui->align_sceneCenterH, SIGNAL(clicked()), m_workarea, SLOT(alignCenterH()));
+    connect(ui->align_sceneTop, SIGNAL(clicked()), m_workarea, SLOT(alignTop()));
+    connect(ui->align_sceneBottom, SIGNAL(clicked()), m_workarea, SLOT(alignBottom()));
+    connect(ui->align_sceneCenterV, SIGNAL(clicked()), m_workarea, SLOT(alignCenterV()));
 
-    connect(ui->align_contentLeft,SIGNAL(clicked()),m_workarea,SLOT(alignContentLeft()));
-    connect(ui->align_contentRight,SIGNAL(clicked()),m_workarea,SLOT(alignContentRight()));
-    connect(ui->align_contentCenterH,SIGNAL(clicked()),m_workarea,SLOT(alignContentCenterH()));
-    connect(ui->align_contentTop,SIGNAL(clicked()),m_workarea,SLOT(alignContentTop()));
-    connect(ui->align_contentBottom,SIGNAL(clicked()),m_workarea,SLOT(alignContentBottom()));
-    connect(ui->align_contentCenterV,SIGNAL(clicked()),m_workarea,SLOT(alignContentCenterV()));
+    connect(ui->align_contentLeft, SIGNAL(clicked()), m_workarea, SLOT(alignContentLeft()));
+    connect(ui->align_contentRight, SIGNAL(clicked()), m_workarea, SLOT(alignContentRight()));
+    connect(ui->align_contentCenterH, SIGNAL(clicked()), m_workarea, SLOT(alignContentCenterH()));
+    connect(ui->align_contentTop, SIGNAL(clicked()), m_workarea, SLOT(alignContentTop()));
+    connect(ui->align_contentBottom, SIGNAL(clicked()), m_workarea, SLOT(alignContentBottom()));
+    connect(ui->align_contentCenterV, SIGNAL(clicked()), m_workarea, SLOT(alignContentCenterV()));
 
     // WorkArea
-    connect(m_workarea,SIGNAL(pickerColor(QRgb)),this,SLOT(pickerColor(QRgb)));
-    connect(m_workarea,SIGNAL(itemSelected(Cut*)),this,SLOT(itemSelected(Cut*)));
-    connect(m_workarea,SIGNAL(multipleSelection()),this,SLOT(multipleSelection()));
+    connect(m_workarea, SIGNAL(pickerColor(QRgb)), this, SLOT(pickerColor(QRgb)));
+    connect(m_workarea, SIGNAL(itemSelected(Cut*)), this, SLOT(itemSelected(Cut*)));
+    connect(m_workarea, SIGNAL(multipleSelection()), this, SLOT(multipleSelection()));
 
     /*
      * Interface
@@ -143,12 +152,12 @@ Interface::Interface(QWidget *parent) :
      * Translation
      */
     fillLanguages();
-    retranslate();
-    m_languages->actions().first()->toggle();
+    readSettings(this);
 }
 
 Interface::~Interface()
 {
+    writeSettings(this);
     delete ui;
 }
 
@@ -172,12 +181,47 @@ void Interface::changeEvent(QEvent *event)
     QMainWindow::changeEvent(event);
 }
 
+void Interface::recurseWrite(QSettings &settings, QObject *)
+{
+    settings.setValue("LastImagePath", lastImagePath);
+    if (m_languages->actions().size())
+    {
+        for (auto a : m_languages->actions())
+        {
+            if (a && a->isChecked())
+            {
+                settings.setValue("LastLang", a->data().toString());
+                break;
+            }
+        }
+    }
+}
+
+void Interface::recurseRead(QSettings &settings, QObject *)
+{
+    lastImagePath = settings.value("LastImagePath", QDir::homePath()).toString();
+    auto lang     = settings.value("LastLang", "en_us").toString();
+    if (m_languages->actions().size())
+    {
+        auto act = m_languages->actions().first();
+        for (auto a : m_languages->actions())
+        {
+            if (a && a->data().toString() == lang)
+            {
+                act = a;
+                break;
+            }
+        }
+        act->toggle();
+    }
+}
+
 /***** SLOTS *****/
 
 // Tools
 void Interface::tool_normal()
 {
-    if(m_currentToolSelected != ui->toolNormal)
+    if (m_currentToolSelected != ui->toolNormal)
     {
         m_currentToolSelected->setChecked(false);
         m_currentToolSelected = ui->toolNormal;
@@ -191,34 +235,32 @@ void Interface::tool_normal()
         ui->statusBar->clearMessage();
     }
     else
-    {
         m_currentToolSelected->setChecked(true);
-    }
 }
 void Interface::tool_zoomIn()
 {
     // Maximum zoom 3200%
-    if(m_zoomRatio < 32)
+    if (m_zoomRatio < 32)
     {
         m_zoomRatio *= 2;
-        ui->workArea->scale(2.0,2.0);
-        setWindowTitle("Sprite Decomposer - "+QString::number(100*m_zoomRatio)+"%");
+        ui->workArea->scale(2.0, 2.0);
+        setWindowTitle("Sprite Decomposer - " + QString::number(100 * m_zoomRatio) + "%");
     }
 }
 void Interface::tool_zoomOut()
 {
     // Minimum zoom 12,5%
-    if(m_zoomRatio > 0.125)
+    if (m_zoomRatio > 0.125)
     {
         m_zoomRatio /= 2;
-        ui->workArea->scale(0.5,0.5);
-        setWindowTitle("Sprite Decomposer - "+QString::number(100*m_zoomRatio)+"%");
+        ui->workArea->scale(0.5, 0.5);
+        setWindowTitle("Sprite Decomposer - " + QString::number(100 * m_zoomRatio) + "%");
     }
 }
 void Interface::tool_cutRect()
 {
     // Switch tool
-    if(m_currentToolSelected != ui->toolCutRect)
+    if (m_currentToolSelected != ui->toolCutRect)
     {
         // Interface
         m_currentToolSelected->setChecked(false);
@@ -234,14 +276,12 @@ void Interface::tool_cutRect()
     }
     // Already selected
     else
-    {
         m_currentToolSelected->setChecked(true);
-    }
 }
 void Interface::tool_cutGrid()
 {
     // Switch tool
-    if(m_currentToolSelected != ui->toolCutGrid)
+    if (m_currentToolSelected != ui->toolCutGrid)
     {
         // Interface
         m_currentToolSelected->setChecked(false);
@@ -257,14 +297,12 @@ void Interface::tool_cutGrid()
     }
     // Already selected
     else
-    {
         m_currentToolSelected->setChecked(true);
-    }
 }
 void Interface::tool_mark()
 {
     // Switch tool
-    if(m_currentToolSelected != ui->toolMark)
+    if (m_currentToolSelected != ui->toolMark)
     {
         // Interface
         m_currentToolSelected->setChecked(false);
@@ -281,14 +319,12 @@ void Interface::tool_mark()
     }
     // Already selected
     else
-    {
         m_currentToolSelected->setChecked(true);
-    }
 }
 void Interface::tool_picker()
 {
     // Switch tool
-    if(m_currentToolSelected != ui->toolPicker)
+    if (m_currentToolSelected != ui->toolPicker)
     {
         // Interface
         m_currentToolSelected->setChecked(false);
@@ -304,14 +340,12 @@ void Interface::tool_picker()
     }
     // Already selected
     else
-    {
         m_currentToolSelected->setChecked(true);
-    }
 }
 void Interface::tool_cutAuto()
 {
     // Switch tool
-    if(m_currentToolSelected != ui->toolCutAuto)
+    if (m_currentToolSelected != ui->toolCutAuto)
     {
         // Interface
         m_currentToolSelected->setChecked(false);
@@ -327,35 +361,34 @@ void Interface::tool_cutAuto()
     }
     // Already selected
     else
-    {
         m_currentToolSelected->setChecked(true);
-    }
 }
 
 // Menu
 void Interface::menu_open()
 {
     // Document opened must be saved
-    if(m_workModified && !m_imageFilename.isEmpty())
+    if (m_workModified && !m_imageFilename.isEmpty())
     {
-        if(saveModification() < 0) return;
+        if (saveModification() < 0) return;
     }
 
     // Open file
-    QString filename = QFileDialog::getOpenFileName(this,trUtf8("Ouvrir un fichier"),"",trUtf8("Tous les fichiers(*.*);;Fichier image (*.png *.jpg *.bmp *.gif);;Fichier XML(*.xml)")); //*/"/Users/Nicolas/Pictures/Resources/Sprite/NessSBBB.png";
+    QString filename = QFileDialog::getOpenFileName(this, trUtf8("Ouvrir un fichier"), lastImagePath, trUtf8("Tous les fichiers(*.*);;Fichier image (*.png *.jpg *.bmp *.gif);;Fichier XML(*.xml)")); //*/"/Users/Nicolas/Pictures/Resources/Sprite/NessSBBB.png";
 
-    if(!filename.isEmpty())
+    if (!filename.isEmpty())
     {
         // Clear all stuff
         closeAll();
 
         QString extension = filename.right(3).toLower();
-        if(extension == "xml")
+        if (extension == "xml")
             openXMl(filename);
-        else if(extension == "png" || extension == "jpg" || extension == "bmp" || extension == "gif")
-            openImage(filename);
         else
-            QMessageBox::warning(this,trUtf8("Impossible d'ouvrir le fichier"),trUtf8("Type de fichier non supporté"));
+            if (extension == "png" || extension == "jpg" || extension == "bmp" || extension == "gif")
+                openImage(filename);
+            else
+                QMessageBox::warning(this, trUtf8("Impossible d'ouvrir le fichier"), trUtf8("Type de fichier non supporté"));
 
         m_workModified = false;
         setWindowModified(false);
@@ -363,14 +396,14 @@ void Interface::menu_open()
 }
 void Interface::menu_save()
 {
-    if(!m_xmlFilename.isEmpty())
+    if (!m_xmlFilename.isEmpty())
         saveAll(m_xmlFilename);
     else
         menu_saveAs();
 }
 void Interface::menu_saveAs()
 {
-    QString saveFile = QFileDialog::getSaveFileName(this,trUtf8("Enregistrer sous..."),QString(),trUtf8("Fichier XML(*.xml)"));
+    QString saveFile = QFileDialog::getSaveFileName(this, trUtf8("Enregistrer sous..."), lastImagePath, trUtf8("Fichier XML(*.xml)"));
     saveAll(saveFile);
 }
 
@@ -387,127 +420,131 @@ void Interface::menu_about()
 // configurePanel
 void Interface::configurePanelChanged(int index)
 {
-    switch(index)
+    switch (index)
     {
-    // Cut Rect
-    case 0:
-        ui->toolCutRect->setChecked(true);
-        tool_cutRect();
-        break;
+        // Cut Rect
+        case 0:
+            ui->toolCutRect->setChecked(true);
+            tool_cutRect();
+            break;
         // Cut Grid
-    case 1:
-        ui->toolCutGrid->setChecked(true);
-        tool_cutGrid();
-        break;
+        case 1:
+            ui->toolCutGrid->setChecked(true);
+            tool_cutGrid();
+            break;
         // Mark
-    case 2:
-        ui->toolMark->setChecked(true);
-        tool_mark();
-        break;
+        case 2:
+            ui->toolMark->setChecked(true);
+            tool_mark();
+            break;
         // Picker
-    case 3:
-        ui->toolPicker->setChecked(true);
-        tool_picker();
-        break;
-    default:
-        ui->toolNormal->setChecked(true);
-        tool_normal();
-        break;
+        case 3:
+            ui->toolPicker->setChecked(true);
+            tool_picker();
+            break;
+        default:
+            ui->toolNormal->setChecked(true);
+            tool_normal();
+            break;
     }
 }
 
 // configureCut
 void Interface::addCutRect()
 {
-    if(ui->toolCutRect->isEnabled() && !m_imageFilename.isEmpty())
+    if (ui->toolCutRect->isEnabled() && !m_imageFilename.isEmpty())
     {
-        m_workarea->addCut(QRectF(ui->cutRect_I_X->value(),ui->cutRect_I_Y->value(),ui->cutRect_I_Width->value(),ui->cutRect_I_Height->value()),WorkArea::TypeCutRect);
-        m_workModified = true; setWindowModified(true);
+        m_workarea->addCut(QRectF(ui->cutRect_I_X->value(), ui->cutRect_I_Y->value(), ui->cutRect_I_Width->value(), ui->cutRect_I_Height->value()), WorkArea::TypeCutRect);
+        m_workModified = true;
+        setWindowModified(true);
     }
 }
 void Interface::addCutGrid()
 {
-    if(ui->toolCutGrid->isEnabled() && !m_imageFilename.isEmpty())
+    if (ui->toolCutGrid->isEnabled() && !m_imageFilename.isEmpty())
     {
-        m_workarea->addCut(QRectF(ui->cutGrid_I_X->value(),ui->cutGrid_I_Y->value(),ui->cutGrid_I_Width->value(),ui->cutGrid_I_Height->value()),WorkArea::TypeCutGrid);
-        m_workModified = true; setWindowModified(true);
+        m_workarea->addCut(QRectF(ui->cutGrid_I_X->value(), ui->cutGrid_I_Y->value(), ui->cutGrid_I_Width->value(), ui->cutGrid_I_Height->value()), WorkArea::TypeCutGrid);
+        m_workModified = true;
+        setWindowModified(true);
     }
 }
 void Interface::cut_GeometryChange()
 {
-    Cut *from = qobject_cast<Cut*>(sender());
-    if(!from) return;
+    auto *from = qobject_cast<Cut*>(sender());
+    if (!from) return;
 
-    if(from->row() > 1 || from->column() > 1)
+    if (from->row() > 1 || from->column() > 1)
         showCutGridInfo(from);
     else
         showCutRectInfo(from);
 
-    m_workModified = true; setWindowModified(true);
+    m_workModified = true;
+    setWindowModified(true);
 }
 
 
 // configMark
 void Interface::addMark()
 {
-    if(ui->toolMark->isEnabled())
+    if (ui->toolMark->isEnabled())
     {
-        if(ui->mark_I_Orientation->currentIndex() == Mark::MarkHorizontal)
-            m_workarea->addMark(ui->mark_I_Y->text().toInt(),Mark::MarkHorizontal);
+        if (ui->mark_I_Orientation->currentIndex() == Mark::MarkHorizontal)
+            m_workarea->addMark(ui->mark_I_Y->text().toInt(), Mark::MarkHorizontal);
 
-        else if(ui->mark_I_Orientation->currentIndex() == Mark::MarkVertical)
-            m_workarea->addMark(ui->mark_I_X->text().toInt(),Mark::MarkVertical);
+        else
+            if (ui->mark_I_Orientation->currentIndex() == Mark::MarkVertical)
+                m_workarea->addMark(ui->mark_I_X->text().toInt(), Mark::MarkVertical);
     }
 }
 
 void Interface::mark_OrientationChange(int index)
 {
-    switch(index)
+    switch (index)
     {
-    case Mark::MarkHorizontal: // Horizontal
-        ui->mark_L_Horizontal->setEnabled(true);
-        ui->mark_I_Y->setEnabled(true);
-        ui->mark_L_Y->setEnabled(true);
-        ui->mark_L_Vertical->setEnabled(false);
-        ui->mark_I_X->setEnabled(false);
-        ui->mark_I_X->clear();
-        ui->mark_L_X->setEnabled(false);
+        case Mark::MarkHorizontal: // Horizontal
+            ui->mark_L_Horizontal->setEnabled(true);
+            ui->mark_I_Y->setEnabled(true);
+            ui->mark_L_Y->setEnabled(true);
+            ui->mark_L_Vertical->setEnabled(false);
+            ui->mark_I_X->setEnabled(false);
+            ui->mark_I_X->clear();
+            ui->mark_L_X->setEnabled(false);
 
-        m_workarea->setTool(WorkArea::ToolMarkH);
+            m_workarea->setTool(WorkArea::ToolMarkH);
 
-        this->setCursor(Qt::ArrowCursor);
-        break;
-    case Mark::MarkVertical: // Vertical
-        ui->mark_L_Horizontal->setEnabled(false);
-        ui->mark_I_Y->setEnabled(false);
-        ui->mark_I_Y->clear();
-        ui->mark_L_Y->setEnabled(false);
-        ui->mark_L_Vertical->setEnabled(true);
-        ui->mark_I_X->setEnabled(true);
-        ui->mark_L_X->setEnabled(true);
+            this->setCursor(Qt::ArrowCursor);
+            break;
+        case Mark::MarkVertical: // Vertical
+            ui->mark_L_Horizontal->setEnabled(false);
+            ui->mark_I_Y->setEnabled(false);
+            ui->mark_I_Y->clear();
+            ui->mark_L_Y->setEnabled(false);
+            ui->mark_L_Vertical->setEnabled(true);
+            ui->mark_I_X->setEnabled(true);
+            ui->mark_L_X->setEnabled(true);
 
-        m_workarea->setTool(WorkArea::ToolMarkV);
+            m_workarea->setTool(WorkArea::ToolMarkV);
 
-        this->setCursor(Qt::ArrowCursor);
-        break;
+            this->setCursor(Qt::ArrowCursor);
+            break;
     }
 }
 
 void Interface::mark_PositionChange()
 {
-    Mark *from = qobject_cast<Mark*>(sender());
-    if(!from) return;
+    auto *from = qobject_cast<Mark*>(sender());
+    if (!from) return;
 
-    switch(from->orientation())
+    switch (from->orientation())
     {
-    case Mark::MarkHorizontal:
-        ui->mark_I_Y->setText(QString::number(from->position()));
-        break;
-    case Mark::MarkVertical:
-        ui->mark_I_X->setText(QString::number(from->position()));
-        break;
-    default:
-        break;
+        case Mark::MarkHorizontal:
+            ui->mark_I_Y->setText(QString::number(from->position()));
+            break;
+        case Mark::MarkVertical:
+            ui->mark_I_X->setText(QString::number(from->position()));
+            break;
+        default:
+            break;
     }
 }
 
@@ -515,22 +552,23 @@ void Interface::mark_PositionChange()
 void Interface::picker_OpenColorPicker()
 {
     // Open Color Picker Dialog and Set Transparent Color
-    if(ui->toolPicker->isEnabled() && !m_imageFilename.isEmpty())
-        m_workarea->setMaskColor(QColorDialog::getColor(Qt::white,this).rgb());
+    if (ui->toolPicker->isEnabled() && !m_imageFilename.isEmpty())
+        m_workarea->setMaskColor(QColorDialog::getColor(Qt::white, this).rgb());
 }
 
 void Interface::picker_SetMaskColor()
 {
-    if(ui->toolPicker->isEnabled() && !m_imageFilename.isEmpty())
+    if (ui->toolPicker->isEnabled() && !m_imageFilename.isEmpty())
     {
-        QByteArray  red = ui->picker_I_Color->text().mid(0,2).toAscii(),
-                green = ui->picker_I_Color->text().mid(2,2).toAscii(),
-                blue = ui->picker_I_Color->text().mid(4,2).toAscii();
-        QColor color(red.toInt(0,16),green.toInt(0,16),blue.toInt(0,16));
-        if(color.isValid())
+        QByteArray  red = ui->picker_I_Color->text().mid(0, 2).toLatin1(),
+                    green = ui->picker_I_Color->text().mid(2, 2).toLatin1(),
+                    blue = ui->picker_I_Color->text().mid(4, 2).toLatin1();
+        QColor color(red.toInt(nullptr, 16), green.toInt(nullptr, 16), blue.toInt(nullptr, 16));
+        if (color.isValid())
         {
             m_workarea->setMaskColor(color.rgb());
-            m_workModified = true; setWindowModified(true);
+            m_workModified = true;
+            setWindowModified(true);
         }
     }
 }
@@ -539,48 +577,51 @@ void Interface::picker_SetMaskColor()
 void Interface::viewer_zoomIn()
 {
     // Maximum zoom 3200%
-    if(m_zoomViewRatio < 32 && ui->toolZoomIn->isEnabled())
+    if (m_zoomViewRatio < 32 && ui->toolZoomIn->isEnabled())
     {
         m_zoomViewRatio *= 2;
-        ui->viewer->scale(2.0,2.0);
+        ui->viewer->scale(2.0, 2.0);
     }
 }
 void Interface::viewer_zoomOut()
 {
     // Minimum zoom 12,5%
-    if(m_zoomViewRatio > 0.125 && ui->toolZoomOut->isEnabled())
+    if (m_zoomViewRatio > 0.125 && ui->toolZoomOut->isEnabled())
     {
         m_zoomViewRatio /= 2;
-        ui->viewer->scale(0.5,0.5);
+        ui->viewer->scale(0.5, 0.5);
     }
 }
 
 // Animation Panel
 void Interface::animation_add()
 {
-    if(m_imageFilename.isEmpty()) return;
+    if (m_imageFilename.isEmpty()) return;
 
     bool ok;
-    QString animationName = QInputDialog::getText(this, tr("Nouvelle animation"),tr("Nom de l'animation:"), QLineEdit::Normal, QString(), &ok);
+    QString animationName = QInputDialog::getText(this, tr("Nouvelle animation"), tr("Nom de l'animation:"), QLineEdit::Normal, QString(), &ok);
     if (ok && !animationName.isEmpty())
     {
         addAnimation(animationName);
-        m_workModified = true; setWindowModified(true);
+        m_workModified = true;
+        setWindowModified(true);
     }
 }
 void Interface::animation_remove()
 {
-    if(m_imageFilename.isEmpty()) return;
+    if (m_imageFilename.isEmpty()) return;
 
     removeAnimation(ui->animation_I_List->currentIndex());
-    m_workModified = true; setWindowModified(true);
+    m_workModified = true;
+    setWindowModified(true);
 }
-void Interface::animation_changeTitle(QString title)
-{
-    if(m_imageFilename.isEmpty()) return;
 
-    ui->animation_I_List->setItemText(ui->animation_I_List->currentIndex(),title);
-    if(!m_selectAnimation)
+void Interface::animation_changeTitle(const QString& title)
+{
+    if (m_imageFilename.isEmpty()) return;
+
+    ui->animation_I_List->setItemText(ui->animation_I_List->currentIndex(), title);
+    if (!m_selectAnimation)
     {
         m_workModified = true;
         setWindowModified(true);
@@ -588,18 +629,18 @@ void Interface::animation_changeTitle(QString title)
 }
 
 // WorkArea
-void Interface::pickerColor(QRgb color)
+void Interface::pickerColor(const QRgb& color)
 {
-    if(!m_imageFilename.isEmpty())
+    if (!m_imageFilename.isEmpty())
     {
-        ui->picker_I_Color->setText(QString::number(color,16).right(6).toUpper());
+        ui->picker_I_Color->setText(QString::number(color, 16).right(6).toUpper());
         ui->toolCutAuto->setEnabled(true);
     }
 }
 void Interface::itemSelected(Cut *selection)
 {
-    if(!selection) return;
-    if(selection->row() > 1 || selection->column() > 1)
+    if (!selection) return;
+    if (selection->row() > 1 || selection->column() > 1)
     {
         ui->configurePanel->setCurrentIndex(1);
         showCutGridInfo(selection);
@@ -631,31 +672,31 @@ int Interface::saveModification()
     msgBox.setText(trUtf8("Les animations ont été modifiées"));
     msgBox.setInformativeText(trUtf8("Voulez-vous enregistrer les changements?"));
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-    msgBox.setButtonText(QMessageBox::Save,trUtf8("Enregistrer"));
-    msgBox.setButtonText(QMessageBox::Discard,trUtf8("Ignorer"));
-    msgBox.setButtonText(QMessageBox::Cancel,trUtf8("Annuler"));
+    msgBox.setButtonText(QMessageBox::Save, trUtf8("Enregistrer"));
+    msgBox.setButtonText(QMessageBox::Discard, trUtf8("Ignorer"));
+    msgBox.setButtonText(QMessageBox::Cancel, trUtf8("Annuler"));
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
 
     switch (ret)
     {
-    case QMessageBox::Save:
-        // Save was clicked
-        if(m_xmlFilename.isEmpty())
-            menu_save();
-        else
-            menu_saveAs();
-        break;
-    case QMessageBox::Cancel:
-        // Cancel was clicked
-        return -1;
-        break;
-    case QMessageBox::Discard:
-        // Don't Save was clicked
-        break;
-    default:
-        // should never be reached
-        break;
+        case QMessageBox::Save:
+            // Save was clicked
+            if (m_xmlFilename.isEmpty())
+                menu_save();
+            else
+                menu_saveAs();
+            break;
+        case QMessageBox::Cancel:
+            // Cancel was clicked
+            return -1;
+            break;
+        case QMessageBox::Discard:
+            // Don't Save was clicked
+            break;
+        default:
+            // should never be reached
+            break;
     }
     return 1;
 }
@@ -663,9 +704,9 @@ int Interface::saveModification()
 void Interface::saveAll(const QString &filename)
 {
     QFile file(filename);
-    if(!file.open(QFile::WriteOnly))
+    if (!file.open(QFile::WriteOnly))
     {
-        QMessageBox::critical(this,trUtf8("Erreur"),trUtf8("Impossible d'enregistrer le fichier"));
+        QMessageBox::critical(this, trUtf8("Erreur"), trUtf8("Impossible d'enregistrer le fichier"));
         return;
     }
 
@@ -673,32 +714,31 @@ void Interface::saveAll(const QString &filename)
     QDomDocument doc("SpriteDecomposer");
     QDomElement root = doc.createElement("sprites");
 
-    root.setAttribute("image",m_imageFilename.split("/").last());
-    root.setAttribute("transparentColor",ui->picker_I_Color->text());
+    root.setAttribute("image", m_imageFilename.split("/").last());
+    root.setAttribute("transparentColor", ui->picker_I_Color->text());
     doc.appendChild(root);
 
     // temp
-    Animation *animation = 0;
-    Cut *cut = 0;
-    for(int i=0;i<m_animations.size();i++)
+    Animation *animation = nullptr;
+
+    for (auto m_animation : m_animations)
     {
-        animation = m_animations.at(i);
+        animation = m_animation;
         QDomElement animationElm = doc.createElement("animation");
-        animationElm.setAttribute("title",animation->title());
-        animationElm.setAttribute("delay",animation->speed());
+        animationElm.setAttribute("title", animation->title());
+        animationElm.setAttribute("delay", animation->speed());
 
-        for(int j=0;j<animation->cuts()->size();j++)
+        for (const auto& cut : animation->cuts())
         {
-           cut = animation->cuts()->at(j);
-           QDomElement cutElm = doc.createElement("cut");
-           cutElm.setAttribute("x",cut->x());
-           cutElm.setAttribute("y",cut->y());
-           cutElm.setAttribute("w",cut->width());
-           cutElm.setAttribute("h",cut->height());
-           cutElm.setAttribute("row",cut->row());
-           cutElm.setAttribute("col",cut->column());
+            QDomElement cutElm = doc.createElement("cut");
+            cutElm.setAttribute("x", cut->x());
+            cutElm.setAttribute("y", cut->y());
+            cutElm.setAttribute("w", cut->width());
+            cutElm.setAttribute("h", cut->height());
+            cutElm.setAttribute("row", cut->row());
+            cutElm.setAttribute("col", cut->column());
 
-           animationElm.appendChild(cutElm);
+            animationElm.appendChild(cutElm);
         }
         root.appendChild(animationElm);
     }
@@ -715,70 +755,68 @@ void Interface::saveAll(const QString &filename)
 void Interface::openXMl(const QString &filename)
 {
     QFile file(filename);
-    if(!file.open(QFile::ReadOnly))
+    if (!file.open(QFile::ReadOnly))
     {
-        QMessageBox::critical(this,trUtf8("Erreur"),trUtf8("Impossible d'ouvir le fichier"));
+        QMessageBox::critical(this, trUtf8("Erreur"), trUtf8("Impossible d'ouvir le fichier"));
         return;
     }
 
     QString dirPath;
     QStringList fileDir = filename.split("/");
-    for(int i=0;i<fileDir.size()-1;i++)
-    {
-        dirPath += "/"+fileDir.at(i);
-    }
+    for (int i = 0; i < fileDir.size() - 1; i++)
+        dirPath += "/" + fileDir.at(i);
 
     // Ouverture du fichier XML
     QDomDocument doc("SpriteDecomposer");
-    if(!doc.setContent(&file))
+    if (!doc.setContent(&file))
     {
         file.close();
-        QMessageBox::critical(this,trUtf8("Erreur"),trUtf8("Impossible d'ouvir le fichier"));
+        QMessageBox::critical(this, trUtf8("Erreur"), trUtf8("Impossible d'ouvir le fichier"));
         return;
     }
     QDomElement root = doc.documentElement();
-    if(root.tagName() != "sprites" || !root.hasAttribute("image") || !root.hasAttribute("transparentColor"))
+    if (root.tagName() != "sprites" || !root.hasAttribute("image") || !root.hasAttribute("transparentColor"))
     {
         file.close();
-        QMessageBox::critical(this,trUtf8("Format non reconnu"),trUtf8("Le contenu de ce fichier est invalide"));
+        QMessageBox::critical(this, trUtf8("Format non reconnu"), trUtf8("Le contenu de ce fichier est invalide"));
         return;
     }
 
     // Set background
-    openImage(dirPath + "/" + root.attribute("image"),false);
+    openImage(dirPath + "/" + root.attribute("image"), false);
 
     // Animations
     QDomNode n = root.firstChild();
-    while( !n.isNull() )
+    while ( !n.isNull() )
     {
         QDomElement e = n.toElement();
-        if( !e.isNull() && e.tagName() == "animation" && e.hasAttribute("title") && e.hasAttribute("delay"))
+        if ( !e.isNull() && e.tagName() == "animation" && e.hasAttribute("title") && e.hasAttribute("delay"))
         {
             Animation *animation = addAnimation(e.attribute("title"));
             animation->setSpeed(e.attribute("delay").toInt());
 
             // All Cuts of animation
             QDomNode nn = n.firstChild();
-            while(!nn.isNull())
+            while (!nn.isNull())
             {
                 QDomElement ee = nn.toElement();
-                if(!ee.isNull()
-                    && ee.tagName() == "cut"
-                    && ee.hasAttribute("x")
-                    && ee.hasAttribute("y")
-                    && ee.hasAttribute("w")
-                    && ee.hasAttribute("h")
-                    && ee.hasAttribute("row")
-                    && ee.hasAttribute("col")
-                  )
+                if (!ee.isNull()
+                        && ee.tagName() == "cut"
+                        && ee.hasAttribute("x")
+                        && ee.hasAttribute("y")
+                        && ee.hasAttribute("w")
+                        && ee.hasAttribute("h")
+                        && ee.hasAttribute("row")
+                        && ee.hasAttribute("col")
+                   )
                 {
                     m_workarea->setItemRow(ee.attribute("row").toInt());
                     m_workarea->setItemColumn(ee.attribute("column").toInt());
 
-                    if(ee.attribute("row").toInt() > 1 || ee.attribute("column").toInt() > 1)
-                        m_workarea->addCut(QRectF(ee.attribute("x").toFloat(),ee.attribute("y").toFloat(),ee.attribute("w").toFloat(),ee.attribute("h").toFloat()),WorkArea::TypeCutGrid);
+                    if (ee.attribute("row").toInt() > 1 || ee.attribute("column").toInt() > 1)
+                        m_workarea->addCut(QRectF(ee.attribute("x").toFloat(), ee.attribute("y").toFloat(), ee.attribute("w").toFloat(), ee.attribute("h").toFloat()), WorkArea::TypeCutGrid);
                     else
-                        m_workarea->addCut(QRectF(ee.attribute("x").toFloat(),ee.attribute("y").toFloat(),ee.attribute("w").toFloat(),ee.attribute("h").toFloat()));
+                        m_workarea->addCut(QRectF(ee.attribute("x").toFloat(), ee.attribute("y").toFloat(), ee.attribute("w").toFloat(), ee.attribute("h").toFloat()));
                 }
                 nn = nn.nextSibling();
             }
@@ -794,16 +832,16 @@ void Interface::openXMl(const QString &filename)
     m_xmlFilename = filename;
 }
 
-void Interface::openImage(const QString &filename,bool createDefaultAnimation)
+void Interface::openImage(const QString &filename, bool createDefaultAnimation)
 {
     m_imageFilename = filename;
-
+    lastImagePath = QFileInfo(filename).absolutePath();
     // WorkArea Init
     m_workarea->setBackground(filename);
-    if(m_workarea->background().hasAlpha()) ui->toolCutAuto->setEnabled(true);
+    if (m_workarea->background().hasAlpha()) ui->toolCutAuto->setEnabled(true);
 
     // Default animation
-    if(createDefaultAnimation)
+    if (createDefaultAnimation)
         addAnimation(trUtf8("Animation par défaut"));
 
     // Interface
@@ -812,26 +850,26 @@ void Interface::openImage(const QString &filename,bool createDefaultAnimation)
 
 Animation* Interface::addAnimation(const QString &title)
 {
-    Animation *animation = new Animation(this);
+    auto *animation = new Animation(this);
     animation->setTitle(title);
     animation->setBackground(m_workarea->background());
     m_animations.append(animation);
 
     // Signal / Slot
-    connect(ui->viewer_I_Play,SIGNAL(toggled(bool)),animation,SLOT(playAnimation(bool)));
-    connect(ui->viewer_I_First,SIGNAL(clicked()),animation,SLOT(showFirstFrame()));
-    connect(ui->viewer_I_Previous,SIGNAL(clicked()),animation,SLOT(showPreviousFrame()));
-    connect(ui->viewer_I_Next,SIGNAL(clicked()),animation,SLOT(showNextFrame()));
-    connect(ui->viewer_I_Last,SIGNAL(clicked()),animation,SLOT(showLastFrame()));
-    connect(animation,SIGNAL(frameCountUpdated(int)),this,SLOT(frameCountUpdated(int)));
-    connect(ui->animation_I_Title,SIGNAL(textChanged(QString)),m_workarea,SLOT(setAnimationTitle(QString)));
-    connect(ui->animation_I_Speed,SIGNAL(valueChanged(int)),animation,SLOT(setSpeed(int)));
+    connect(ui->viewer_I_Play, SIGNAL(toggled(bool)), animation, SLOT(playAnimation(bool)));
+    connect(ui->viewer_I_First, SIGNAL(clicked()), animation, SLOT(showFirstFrame()));
+    connect(ui->viewer_I_Previous, SIGNAL(clicked()), animation, SLOT(showPreviousFrame()));
+    connect(ui->viewer_I_Next, SIGNAL(clicked()), animation, SLOT(showNextFrame()));
+    connect(ui->viewer_I_Last, SIGNAL(clicked()), animation, SLOT(showLastFrame()));
+    connect(animation, SIGNAL(frameCountUpdated(int)), this, SLOT(frameCountUpdated(int)));
+    connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), m_workarea, SLOT(setAnimationTitle(QString)));
+    connect(ui->animation_I_Speed, SIGNAL(valueChanged(int)), animation, SLOT(setSpeed(int)));
 
     // Interface
     ui->animation_I_List->addItem(title);
-    ui->animation_I_List->setCurrentIndex(ui->animation_I_List->count()-1);
+    ui->animation_I_List->setCurrentIndex(ui->animation_I_List->count() - 1);
 
-    if(ui->animation_I_List->count() == 1)
+    if (ui->animation_I_List->count() == 1)
     {
         ui->dockViewer->setEnabled(true);
         ui->dockSequence->setEnabled(true);
@@ -845,16 +883,16 @@ Animation* Interface::addAnimation(const QString &title)
 }
 void Interface::removeAnimation(int index)
 {
-    if(index >= 0 && index < m_animations.size())
+    if (index >= 0 && index < m_animations.size())
     {
         Animation *toRemove = m_animations.at(index);
 
-        if(toRemove == m_workarea->animation()) m_workarea->removeAnimation();
+        if (toRemove == m_workarea->animation()) m_workarea->removeAnimation();
 
         m_animations.removeAt(index);
         delete toRemove;
         ui->animation_I_List->removeItem(index);
-        selectAnimation(qMax(0,index-1));
+        selectAnimation(qMax(0, index - 1));
     }
 }
 
@@ -881,13 +919,13 @@ void Interface::showCutGridInfo(Cut *cut)
 
 void Interface::closeAll()
 {
-    for(int i=0;i<m_animations.size();i++)
-        delete m_animations.at(i);
+    for (auto m_animation : m_animations)
+        delete m_animation;
     m_animations.clear();
 
     m_xmlFilename.clear();
     m_imageFilename.clear();
-    m_workarea->setAnimation(0);
+    m_workarea->setAnimation(nullptr);
     m_workarea->clear();
 
     ui->animation_I_List->clear();
@@ -900,20 +938,23 @@ void Interface::fillLanguages()
     m_languages = ui->menuLangue;
 
     // make a group of language actions
-    QActionGroup* actions = new QActionGroup(this);
-    connect(actions, SIGNAL(triggered(QAction*)), this, SLOT(setLanguage(QAction*)));
+    auto* actions = new QActionGroup(this);
 
-    foreach (QString avail, Application::availableLanguages())
+    QStringList tmp = Application::availableLanguages();
+    tmp.sort(Qt::CaseInsensitive);
+
+    for (const auto& avail : tmp)
     {
         // figure out nice names for locales
         QLocale locale(avail);
         QString language = QLocale::languageToString(locale.language());
-        //QString country = QLocale::countryToString(locale.country());
-        QString name = language;// + " (" + country + ")";
-
-        // construct an action
-        QAction* action = m_languages->addAction(name);
-        action->setData(avail);
+        auto action = m_languages->addAction(language);
+        connect(action, &QAction::toggled, this, [avail, this]()
+        {
+            Application::setLanguage(avail);
+            retranslate();
+        });
+        action->setData(avail); // need this so settings save will work proper
         action->setCheckable(true);
         actions->addAction(action);
     }
@@ -930,12 +971,14 @@ void Interface::retranslate()
  */
 void Interface::selectAnimation(int index)
 {
-    if(index >= 0 && index < m_animations.size())
+    QPointer<Animation> animation(nullptr);
+
+    if (index >= 0 && index < m_animations.size())
+        animation = m_animations.at(index);
+
+    if (animation)
     {
-        Animation *animation = m_animations.at(index);
-
         m_workarea->setAnimation(animation);
-
         // Interface
         m_selectAnimation = true;
         ui->animation_I_Title->setText(animation->title());
@@ -945,9 +988,9 @@ void Interface::selectAnimation(int index)
     }
     else
     {
-        m_workarea->setAnimation(0);
+        m_workarea->setAnimation(nullptr);
         ui->animation_I_Title->clear();
-        ui->viewer->setScene(0);
+        ui->viewer->setScene(nullptr);
         ui->animation_I_Image->clear();
 
         ui->dockViewer->setEnabled(false);
@@ -957,10 +1000,5 @@ void Interface::selectAnimation(int index)
         ui->animation_I_Title->setEnabled(false);
         ui->animation_I_Speed->setEnabled(false);
     }
-}
-
-void Interface::setLanguage(QAction *action)
-{
-    Application::setLanguage(action->data().toString());
 }
 

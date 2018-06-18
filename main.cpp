@@ -3,12 +3,18 @@
 
 int main(int argc, char *argv[])
 {
-    Application a(argc, argv);
+    Application app(argc, argv);
+    app.setApplicationName("Sprite Decomposer");
+    app.setApplicationVersion("0.6");
+    app.setApplicationDisplayName("Sprite Decomposer");
+    app.setOrganizationDomain("pasteover.net");
+    app.setOrganizationName("pasteover.net");
+
     Q_INIT_RESOURCE(lang);
-    a.loadTranslations(":/lang");
+    app.loadTranslations(":/lang");
 
     Interface w;
     w.show();
 
-    return a.exec();
+    return app.exec();
 }

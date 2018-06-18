@@ -42,26 +42,29 @@ Under the following conditions:
 #include "workarea.h"
 #include "cut.h"
 #include "mark.h"
+#include "saveable_widget.h"
 
 #include <QDebug>
 
-namespace Ui {
-class Interface;
+namespace Ui
+{
+    class Interface;
 }
 
-class Interface : public QMainWindow
+class Interface : public QMainWindow, utility::SaveableWidget<Interface>
 {
     Q_OBJECT
 
 public:
     // Constructor / Destructor
-    explicit Interface(QWidget *parent = 0);
-    ~Interface();
+    explicit Interface(QWidget *parent = nullptr);
+    ~Interface() override;
 
 protected:
-    void closeEvent(QCloseEvent *event);
-    void changeEvent(QEvent* event);
-
+    void closeEvent(QCloseEvent *event) override;
+    void changeEvent(QEvent* event) override;
+    void recurseWrite(QSettings& settings, QObject* object) override;
+    void recurseRead(QSettings& settings, QObject* object) override;
 public slots:
     // Tools
     void tool_normal();
@@ -104,10 +107,10 @@ public slots:
     // Animation
     void animation_add();
     void animation_remove();
-    void animation_changeTitle(QString title);
+    void animation_changeTitle(const QString& title);
 
     // Workarea
-    void pickerColor(QRgb color);
+    void pickerColor(const QRgb &color);
     void itemSelected(Cut* selection);
     void multipleSelection();
 
@@ -116,7 +119,7 @@ public slots:
 
 private:
     Ui::Interface *ui;              // Interface
-    QList<Animation*> m_animations; // Animations List
+    QList<QPointer<Animation>> m_animations; // Animations List
     WorkArea* m_workarea;           // WorkArea
     QAction *m_currentToolSelected; // Tool selected
     qreal m_zoomRatio;              // Zoom Scene ratio
@@ -126,7 +129,7 @@ private:
     bool m_workModified;
     bool m_selectAnimation;
     AboutDialog *m_aboutDialog;
-
+    QString lastImagePath{};
 private:
     int saveModification();
     void saveAll(const QString &filename);
@@ -145,7 +148,6 @@ private:
 
 private slots:
     void selectAnimation(int index);
-    void setLanguage(QAction* action);
 };
 
 #endif // INTERFACE_H

@@ -3,15 +3,11 @@
 #include <QTranslator>
 #include "application.h"
 
-QTranslator* Application::current = 0;
+QTranslator* Application::current = nullptr;
 Translators Application::translators;
 
 Application::Application(int& argc, char* argv[])
     : QApplication(argc, argv)
-{
-}
-
-Application::~Application()
 {
 }
 
@@ -35,7 +31,7 @@ void Application::loadTranslations(const QDir& dir)
         QString country  = parts.at(parts.count() - 1).toUpper();
 
         // construct and load translator
-        QTranslator* translator = new QTranslator(instance());
+        auto* translator = new QTranslator(instance());
         if (translator->load(file.absoluteFilePath()))
         {
             QString locale = language + "_" + country;
@@ -54,14 +50,10 @@ void Application::setLanguage(const QString& locale)
 {
     // remove previous
     if (current)
-    {
         removeTranslator(current);
-    }
 
     // install new
     current = translators.value(locale, 0);
     if (current)
-    {
         installTranslator(current);
-    }
 }

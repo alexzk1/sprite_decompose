@@ -35,7 +35,8 @@ Under the following conditions:
 #include <QPixmap>
 #include <QKeyEvent>
 #include <QRubberBand>
-
+#include <functional>
+#include <QPointer>
 #include "animation.h"
 #include "cut.h"
 #include "mark.h"
@@ -46,16 +47,15 @@ class Interface;
 
 class WorkArea : public QGraphicsScene
 {
-    Q_OBJECT
-    Q_ENUMS(Tool)
+    Q_OBJECT Q_ENUMS(Tool)
     Q_ENUMS(CutType)
 
 public:
-    enum Tool {ToolNormal,ToolCutRect,ToolCutGrid,ToolMarkH,ToolMarkV,ToolPicker,ToolCutAuto};
-    enum CutType {TypeCutRect,TypeCutGrid};
+    enum Tool {ToolNormal, ToolCutRect, ToolCutGrid, ToolMarkH, ToolMarkV, ToolPicker, ToolCutAuto};
+    enum CutType {TypeCutRect, TypeCutGrid};
 
     // Constructor / Destructor
-    explicit WorkArea(Interface *interface, QObject *parent = 0);
+    explicit WorkArea(Interface *interface, QObject *parent = nullptr);
 
     // Setter
     void setBackground(const QString &filename);
@@ -66,12 +66,12 @@ public:
     Animation* animation();
 
     // Mouse Event
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
     // Key Event
-    void keyReleaseEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event) override;
 
     // Public Methods
     void setMaskColor(QRgb color);
@@ -89,13 +89,13 @@ private:
 private:
     Interface *m_interface;
     QGraphicsView *m_view;              // Interface view for this workarea
-    QPixmap m_background;               // Background image (sprite sheet)
-    QPixmap m_background_masked;        // Background with mask
-    QGraphicsItem *m_backgroundItem;    // Background Item
+    QPixmap m_background{};               // Background image (sprite sheet)
+    QPixmap m_background_masked{};        // Background with mask
+    QGraphicsItem* m_backgroundItem{nullptr};    // Background Item
     Tool m_tool;                        // Actual tool mode
-    Animation* m_animation;             // Current Animation
-    Cut* m_currentDrawing;              // Current Cut Drawing
-    Mark* m_currentMark;                // Current Mark Positionning
+    QPointer<Animation> m_animation{nullptr};             // Current Animation
+    QPointer<Cut> m_currentDrawing{nullptr};              // Current Cut Drawing
+    QPointer<Mark> m_currentMark{nullptr};                // Current Mark Positionning
     QPointF m_originDrawing;            // Origin Drawing
 
     // Selection
@@ -105,7 +105,7 @@ private:
     bool isSelecting;                   // Selection in progress
     QGraphicsItemGroup *m_selectionGroup;   // Item contains all selected cuts
 
-    QList<Mark*> m_marks;               // Marks list
+    QList<QPointer<Mark>> m_marks{};               // Marks list
     // Cut Grid Params
     int m_cutGrid_row;                  // Interface Row Param
     int m_cutGrid_column;               // Interface Column Param
@@ -113,7 +113,7 @@ private:
     int m_cutAuto_tolerance;            // AutoCut tolerance
     bool m_constraintHeight,            // Force all auto cut to have same height
          m_constraintWidth;             // Force all auto cut to have same width
-
+    void inline forEachCut(const std::function<void(Cut*)>& pred) const;
 signals:
     // To Interface
     void pickerColor(QRgb color);

@@ -32,7 +32,7 @@ Under the following conditions:
 #include <QTimerEvent>
 #include <QList>
 #include <QGraphicsScene>
-
+#include <QPointer>
 #include "cut.h"
 #include "mark.h"
 #include "frame.h"
@@ -44,13 +44,13 @@ class Animation : public QObject
     Q_OBJECT
 public:
     // Constructor
-    explicit Animation(QObject *parent = 0);
+    explicit Animation(QObject *parent = nullptr);
 
     // Setter
     void setTitle(const QString &title);
     void setBackground(QPixmap background);
     void setMagnetism(bool magnetism);
-    void setMarks(QList<Mark*> *marks);     // Workarea Marks pointer
+    void setMarks(QList<QPointer<Mark>> *marks);     // Workarea Marks pointer
     void addFrameCount(int count);          // Add <count> Frames in Animation
     void addCut(Cut* cut);
 
@@ -58,7 +58,7 @@ public:
     bool magnetism() const;
     QString title() const;
     QGraphicsScene* scene() const;
-    QList<Cut*>* cuts();
+    QList<QPointer<Cut>> &cuts();
     int frameCount() const;
     int speed() const;
 
@@ -70,7 +70,7 @@ public:
 
 private:
     bool intersectMargin(int pos);          // Number is in margin
-    void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event) override;
     void showFrame();
     Frame getFrame(int frameId);
 
@@ -78,19 +78,19 @@ private:
     QString m_title;                        // Animation Title
     QPixmap m_background;                   // Original SpriteSheet
     QGraphicsScene *m_scene;                // Scene
-// Magnetism
+    // Magnetism
     int m_magnetMargin;                     // Magnetism margin
     bool m_magnetism;                       // Magnetism active
-// Animation Preview
+    // Animation Preview
     bool m_play;                            // Animation is playing
     int m_animationFrameIndex;              // Current Animation Frame Index
     QGraphicsItem *m_animationFrameItem;    // Current Animation Frame Item
     int m_animationTimerId;                 // Animation Timer
     int m_frameCount;                       // Total Frames in Animation
     int m_speed;                            // Animation play speed
-// Resources
-    QList<Cut*> m_cuts;                     // Cut List
-    QList<Mark*> *m_marks;                  // WorkArea Marks' List
+    // Resources
+    QList<QPointer<Cut>> m_cuts{};                     // Cut List
+    QList<QPointer<Mark>> *m_marks{nullptr};                  // WorkArea Marks' List
 
 signals:
     void frameCountUpdated(int frameCount);
