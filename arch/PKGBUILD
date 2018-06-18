@@ -27,6 +27,6 @@ package() {
   install -D -m755 SpriteDecomposer $pkgdir/usr/bin/sprite_decomposer
   
   install -d $pkgdir/usr/share/applications
-  install -m644 $srcdir/sprite_decompose/arch/sprite_decompose.desktop $pkgdir/usr/share/applications  
+  install -m644 $srcdir/sprite_decompose/arch/sprite_decomposer.desktop $pkgdir/usr/share/applications  
   install -m644 $srcdir/sprite_decompose/SpriteDecomposer.icns $pkgdir/usr/share/applications
 }
