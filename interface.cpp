@@ -394,6 +394,7 @@ void Interface::menu_open()
         setWindowModified(false);
     }
 }
+
 void Interface::menu_save()
 {
     if (!m_xmlFilename.isEmpty())
@@ -401,10 +402,16 @@ void Interface::menu_save()
     else
         menu_saveAs();
 }
+
 void Interface::menu_saveAs()
 {
     QString saveFile = QFileDialog::getSaveFileName(this, trUtf8("Enregistrer sous..."), lastImagePath, trUtf8("Fichier XML(*.xml)"));
-    saveAll(saveFile);
+    if (!saveFile.isEmpty())
+    {
+        if (!saveFile.endsWith(".xml", Qt::CaseInsensitive))
+            saveFile += ".xml";
+        saveAll(saveFile);
+    }
 }
 
 void Interface::menu_quit()
@@ -721,7 +728,7 @@ void Interface::saveAll(const QString &filename)
     // temp
     Animation *animation = nullptr;
 
-    for (auto m_animation : m_animations)
+    for (const auto& m_animation : m_animations)
     {
         animation = m_animation;
         QDomElement animationElm = doc.createElement("animation");
@@ -919,7 +926,7 @@ void Interface::showCutGridInfo(Cut *cut)
 
 void Interface::closeAll()
 {
-    for (auto m_animation : m_animations)
+    for (const auto& m_animation : m_animations)
         delete m_animation;
     m_animations.clear();
 
