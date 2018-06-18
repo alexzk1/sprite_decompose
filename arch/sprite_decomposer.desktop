@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Sprite Decomposer
+Comment=Decompose and create animations from a sprite sheet easily.
+Exec=/usr/bin/sprite_decomposer
+Icon=/usr/share/applications/SpriteDecomposer.icns
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Application;Development;IDE;Graphics
