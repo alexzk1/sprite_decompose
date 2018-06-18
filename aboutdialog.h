@@ -2,8 +2,10 @@
 #define ABOUTDIALOG_H
 
 #include <QWidget>
+#include <QShowEvent>
 
-namespace Ui {
+namespace Ui
+{
     class AboutDialog;
 }
 
@@ -12,11 +14,12 @@ class AboutDialog : public QWidget
     Q_OBJECT
 
 public:
-    explicit AboutDialog(QWidget *parent = 0);
-    ~AboutDialog();
+    explicit AboutDialog(QWidget *parent = nullptr);
+    ~AboutDialog() override;
 
     void retranslate();
-
+protected:
+    void showEvent(QShowEvent * event) override;
 private:
     Ui::AboutDialog *ui;
 };

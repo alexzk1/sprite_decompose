@@ -50,7 +50,7 @@
      <x>100</x>
      <y>10</y>
      <width>321</width>
-     <height>231</height>
+     <height>241</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -103,6 +103,16 @@
       </property>
       <property name="openExternalLinks">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="author_zk">
+      <property name="text">
+       <string>&lt;a href='mailto:alexzkhr@gmail.com'&gt;Oleksiy Zakharov&lt;/a&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
