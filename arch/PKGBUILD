@@ -2,7 +2,7 @@
 
 pkgname=sprite-decomposer
 pkgver=0.6.0
-pkgrel=8
+pkgrel=9
 pkgdesc="Decompose and create animations from a sprite sheet easily."
 
 provides=('sprite-decomposer')
