@@ -10,6 +10,10 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTimer>
+#include <QToolButton>
+#include <QSpacerItem>
+#include <QPushButton>
+#include <QCheckBox>
 
 Interface::Interface(QWidget *parent) :
     QMainWindow(parent),
@@ -862,21 +866,20 @@ Animation* Interface::addAnimation(const QString &title)
     animation->setBackground(m_workarea->background());
     m_animations.append(animation);
 
-    // Signal / Slot
+
+    //run/stop/pause should work on all-at-once animations...damn, a bit usable by resources
     connect(ui->viewer_I_Play, SIGNAL(toggled(bool)), animation, SLOT(playAnimation(bool)));
     connect(ui->viewer_I_First, SIGNAL(clicked()), animation, SLOT(showFirstFrame()));
     connect(ui->viewer_I_Previous, SIGNAL(clicked()), animation, SLOT(showPreviousFrame()));
     connect(ui->viewer_I_Next, SIGNAL(clicked()), animation, SLOT(showNextFrame()));
     connect(ui->viewer_I_Last, SIGNAL(clicked()), animation, SLOT(showLastFrame()));
-    connect(animation, SIGNAL(frameCountUpdated(int)), this, SLOT(frameCountUpdated(int)));
-    connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), m_workarea, SLOT(setAnimationTitle(QString)));
-    connect(ui->animation_I_Speed, SIGNAL(valueChanged(int)), animation, SLOT(setSpeed(int)));
+
 
     // Interface
     ui->animation_I_List->addItem(title);
     ui->animation_I_List->setCurrentIndex(ui->animation_I_List->count() - 1);
 
-    if (ui->animation_I_List->count() == 1)
+    if (ui->animation_I_List->count())
     {
         ui->dockViewer->setEnabled(true);
         ui->dockSequence->setEnabled(true);
@@ -983,6 +986,15 @@ void Interface::selectAnimation(int index)
     if (index >= 0 && index < m_animations.size())
         animation = m_animations.at(index);
 
+    //    ui->viewer_I_Play->disconnect(SIGNAL(toggled(bool)));
+    //    ui->viewer_I_First->disconnect(SIGNAL(clicked()));
+    //    ui->viewer_I_Previous->disconnect(SIGNAL(clicked()));
+    //    ui->viewer_I_Next->disconnect(SIGNAL(clicked()));
+    //    ui->viewer_I_Last->disconnect(SIGNAL(clicked()));
+
+    ui->animation_I_Title->disconnect(SIGNAL(textChanged(QString)));
+    ui->animation_I_Speed->disconnect(SIGNAL(valueChanged(int)));
+
     if (animation)
     {
         m_workarea->setAnimation(animation);
@@ -992,6 +1004,15 @@ void Interface::selectAnimation(int index)
         ui->viewer->setScene(animation->scene());
         ui->animation_I_Image->setText(QString::number(animation->frameCount()));
         m_selectAnimation = false;
+        ui->animation_I_Speed->setValue(animation->speed());
+        // Signal / Slot
+
+        animation->disconnect(SIGNAL(frameCountUpdated(int)));
+
+
+        connect(animation, SIGNAL(frameCountUpdated(int)), this, SLOT(frameCountUpdated(int)));
+        connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), m_workarea, SLOT(setAnimationTitle(QString)));
+        connect(ui->animation_I_Speed, SIGNAL(valueChanged(int)), animation, SLOT(setSpeed(int)), Qt::UniqueConnection);
     }
     else
     {
