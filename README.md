@@ -3,6 +3,13 @@ Decompose and create animations from a sprite sheet easily.
 
 It is based on https://sourceforge.net/projects/spritedecompose/
 
+# Arch Linux Install
+Get folder /arch and run `makepkg -is`.
+
+# Build Linux
+It will need pre-installed Qt5 or Qt6.
+Usually it should be as simple as `qmake && make`.
+
 # Original Readme.txt
 
 Sprite Decomposer
