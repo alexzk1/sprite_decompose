@@ -18,7 +18,19 @@ Frame::Frame(QPixmap image, int id)
 /*
  * Getter / Setter
  */
-void Frame::setImage(QPixmap image) { m_image = image; }
-void Frame::setId(int id) { m_id = id; }
-QPixmap Frame::image() { return m_image; }
-int Frame::id() { return m_id; }
+void Frame::setImage(QPixmap image)
+{
+    m_image = image;
+}
+void Frame::setId(int id)
+{
+    m_id = id;
+}
+QPixmap Frame::image()
+{
+    return m_image;
+}
+int Frame::id()
+{
+    return m_id;
+}

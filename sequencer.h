@@ -33,13 +33,12 @@ Under the following conditions:
 class Sequencer : public QGraphicsScene
 {
     Q_OBJECT
-public:
+  public:
     explicit Sequencer(QObject *parent = 0);
 
-signals:
+  signals:
 
-public slots:
-
+  public slots:
 };
 
 #endif // SEQUENCER_H

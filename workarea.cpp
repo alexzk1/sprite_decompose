@@ -1,4 +1,5 @@
 #include "workarea.h"
+
 #include "interface.h"
 
 WorkArea::WorkArea(Interface *interface, QObject *parent) :
@@ -12,7 +13,7 @@ WorkArea::WorkArea(Interface *interface, QObject *parent) :
     m_cutGrid_row = 3;
     m_cutGrid_column = 3;
     m_selectionRect = nullptr;
-    m_view = qobject_cast<QGraphicsView*>(parent);
+    m_view = qobject_cast<QGraphicsView *>(parent);
     m_selectionGroup = nullptr;
 
     // AutoCut
@@ -33,7 +34,8 @@ void WorkArea::setBackground(const QString &filename)
         // Load File
         m_background = QPixmap(filename);
 
-        if (m_background.hasAlpha()) m_background_masked = m_background;
+        if (m_background.hasAlpha())
+            m_background_masked = m_background;
 
         // Scene size init
         setSceneRect(QRectF(QPointF(0, 0), m_background.size()));
@@ -48,8 +50,10 @@ void WorkArea::setBackground(const QString &filename)
 
 QPixmap WorkArea::background() const
 {
-    if (!m_background_masked.isNull()) return m_background_masked;
-    else return m_background;
+    if (!m_background_masked.isNull())
+        return m_background_masked;
+    else
+        return m_background;
 }
 
 void WorkArea::setTool(WorkArea::Tool tool)
@@ -62,7 +66,7 @@ void WorkArea::setAnimation(Animation *animation)
     // Remove previous animation items
     if (m_animation)
     {
-        for (const auto& i : m_animation->cuts())
+        for (const auto &i : m_animation->cuts())
             if (i)
                 removeItem(i);
     }
@@ -74,11 +78,11 @@ void WorkArea::setAnimation(Animation *animation)
         m_animation->setBackground(background());
 
         // Add existing cuts of animation
-        for (const auto& i : m_animation->cuts())
+        for (const auto &i : m_animation->cuts())
             addItem(i);
     }
 }
-Animation* WorkArea::animation()
+Animation *WorkArea::animation()
 {
     return m_animation;
 }
@@ -109,7 +113,7 @@ void WorkArea::mousePressEvent(QGraphicsSceneMouseEvent *event)
             // Select one cut
             m_selectedCuts.clear();
             m_selectedCuts << obj;
-            emit itemSelected(qobject_cast<Cut*>(obj));
+            emit itemSelected(qobject_cast<Cut *>(obj));
             QGraphicsScene::mousePressEvent(event);
             return;
         }
@@ -210,8 +214,8 @@ void WorkArea::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 break;
             }
 
-
-            selectionGeometryMapped = m_view->mapToScene(m_selectionRect->geometry()).boundingRect().toRect();
+            selectionGeometryMapped =
+              m_view->mapToScene(m_selectionRect->geometry()).boundingRect().toRect();
             m_selectedCuts.clear();
             for (const auto &cut : m_animation->cuts())
             {
@@ -234,7 +238,8 @@ void WorkArea::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 if (m_selectedCuts.size() > 1)
                     emit multipleSelection();
                 else
-                    emit itemSelected(qobject_cast<Cut*>(m_selectedCuts.first()->toGraphicsObject()));
+                    emit itemSelected(
+                      qobject_cast<Cut *>(m_selectedCuts.first()->toGraphicsObject()));
             }
 
             m_selectionRect->hide();
@@ -253,7 +258,6 @@ void WorkArea::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QGraphicsScene::mouseMoveEvent(event);
         return;
     }
-
 
     QPointF position = event->scenePos().toPoint();
     bool inScene = sceneRect().contains(position);
@@ -279,7 +283,9 @@ void WorkArea::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         case ToolNormal:
         case ToolCutAuto:
             if (isSelecting)
-                m_selectionRect->setGeometry(QRect(m_selectionOrigin, m_view->mapFromScene(event->scenePos().toPoint())).normalized());
+                m_selectionRect->setGeometry(
+                  QRect(m_selectionOrigin, m_view->mapFromScene(event->scenePos().toPoint()))
+                    .normalized());
             break;
         default:
         case ToolPicker:
@@ -305,9 +311,8 @@ void WorkArea::refreshAll()
     // Add Background
     if (!m_background_masked.isNull())
         m_backgroundItem = addPixmap(m_background_masked);
-    else
-        if (!m_background.isNull())
-            m_backgroundItem = addPixmap(m_background);
+    else if (!m_background.isNull())
+        m_backgroundItem = addPixmap(m_background);
 }
 
 void WorkArea::autoCut(const QRect &area)
@@ -315,11 +320,10 @@ void WorkArea::autoCut(const QRect &area)
     QImage image = m_background_masked.copy(area).toImage();
     QList<QPoint> shapePixel;
     QRgb transparent = qRgba(0, 0, 0, 0);
-    int index = 0, sx = 0, sy = 0,
-        x_min = 0, x_max = 0, y_min = 0, y_max = 0;
+    int index = 0, sx = 0, sy = 0, x_min = 0, x_max = 0, y_min = 0, y_max = 0;
 
     // For Constraints
-    QList<Cut*> genCuts;
+    QList<Cut *> genCuts;
     bool constraints = m_constraintHeight || m_constraintWidth;
     int maxHeight = 0, maxWidth = 0;
 
@@ -344,7 +348,8 @@ void WorkArea::autoCut(const QRect &area)
                     {
                         for (int px = -m_cutAuto_tolerance; px <= m_cutAuto_tolerance; ++px)
                         {
-                            if (image.rect().contains(sx + px, sy + py) && qAlpha(image.pixel(sx + px, sy + py)) > 0)
+                            if (image.rect().contains(sx + px, sy + py)
+                                && qAlpha(image.pixel(sx + px, sy + py)) > 0)
                             {
                                 shapePixel.append(QPoint(sx + px, sy + py));
                                 image.setPixel(sx + px, sy + py, transparent);
@@ -352,10 +357,14 @@ void WorkArea::autoCut(const QRect &area)
                         }
                     }
 
-                    if (sx < x_min) x_min = sx;
-                    if (sx > x_max) x_max = sx;
-                    if (sy < y_min) y_min = sy;
-                    if (sy > y_max) y_max = sy;
+                    if (sx < x_min)
+                        x_min = sx;
+                    if (sx > x_max)
+                        x_max = sx;
+                    if (sy < y_min)
+                        y_min = sy;
+                    if (sy > y_max)
+                        y_max = sy;
 
                     image.setPixel(sx, sy, transparent);
                     index++;
@@ -371,12 +380,15 @@ void WorkArea::autoCut(const QRect &area)
                     }
                 }
 
-                Cut* cut = addCut(QRectF(x_min + area.x(), y_min + area.y(), x_max - x_min + 1, y_max - y_min + 1));
+                Cut *cut = addCut(
+                  QRectF(x_min + area.x(), y_min + area.y(), x_max - x_min + 1, y_max - y_min + 1));
                 if (constraints)
                 {
                     genCuts.append(cut);
-                    if (m_constraintHeight) maxHeight = qMax(maxHeight, y_max - y_min + 1);
-                    if (m_constraintWidth) maxWidth = qMax(maxWidth, x_max - x_min + 1);
+                    if (m_constraintHeight)
+                        maxHeight = qMax(maxHeight, y_max - y_min + 1);
+                    if (m_constraintWidth)
+                        maxWidth = qMax(maxWidth, x_max - x_min + 1);
                 }
                 index = 0;
                 shapePixel.clear();
@@ -388,17 +400,19 @@ void WorkArea::autoCut(const QRect &area)
     {
         for (auto cut : genCuts)
         {
-            if (m_constraintHeight) cut->setHeight(maxHeight);
-            if (m_constraintWidth) cut->setWidth(maxWidth);
+            if (m_constraintHeight)
+                cut->setHeight(maxHeight);
+            if (m_constraintWidth)
+                cut->setWidth(maxWidth);
         }
     }
 }
 
-void WorkArea::forEachCut(const std::function<void (Cut *)> &pred) const
+void WorkArea::forEachCut(const std::function<void(Cut *)> &pred) const
 {
     for (auto m_selectedCut : m_selectedCuts)
     {
-        auto cut = qobject_cast<Cut*>(m_selectedCut->toGraphicsObject());
+        auto cut = qobject_cast<Cut *>(m_selectedCut->toGraphicsObject());
         if (cut)
             pred(cut);
     }
@@ -425,9 +439,9 @@ void WorkArea::setMaskColor(QRgb color)
     emit pickerColor(color);
 }
 
-Cut* WorkArea::addCut(const QRectF &geometry, WorkArea::CutType cutType)
+Cut *WorkArea::addCut(const QRectF &geometry, WorkArea::CutType cutType)
 {
-    auto* cut = new Cut(geometry);
+    auto *cut = new Cut(geometry);
     connect(cut, SIGNAL(geometryChanged()), m_interface, SLOT(cut_GeometryChange()));
 
     if (cutType == TypeCutGrid)
@@ -445,9 +459,9 @@ Cut* WorkArea::addCut(const QRectF &geometry, WorkArea::CutType cutType)
     return cut;
 }
 
-Mark* WorkArea::addMark(int position, Mark::MarkOrientation orientation)
+Mark *WorkArea::addMark(int position, Mark::MarkOrientation orientation)
 {
-    auto* mark = new Mark(orientation, position, width() - 1, height() - 1);
+    auto *mark = new Mark(orientation, position, width() - 1, height() - 1);
     connect(mark, SIGNAL(positionChange()), m_interface, SLOT(mark_PositionChange()));
 
     m_marks.append(mark);
@@ -468,7 +482,7 @@ void WorkArea::removeAnimation()
     // Remove previous animation items
     if (m_animation)
     {
-        for (const auto& i : m_animation->cuts())
+        for (const auto &i : m_animation->cuts())
             removeItem(i);
     }
     m_animation = nullptr;
@@ -476,81 +490,82 @@ void WorkArea::removeAnimation()
 
 void WorkArea::setItemWidth(int width)
 {
-    if (m_selectedCuts.size() != 1) return;
+    if (m_selectedCuts.size() != 1)
+        return;
 
-    forEachCut([this, width](auto cut)
-    {
-        if (sceneRect().contains(cut->x() + width, 0)) cut->setWidth(width);
+    forEachCut([this, width](auto cut) {
+        if (sceneRect().contains(cut->x() + width, 0))
+            cut->setWidth(width);
     });
 }
 void WorkArea::setItemHeight(int height)
 {
-    if (m_selectedCuts.size() != 1) return;
+    if (m_selectedCuts.size() != 1)
+        return;
 
-    forEachCut([this, height](auto cut)
-    {
+    forEachCut([this, height](auto cut) {
         if (sceneRect().contains(0, cut->y() + height))
             cut->setHeight(height);
     });
 }
 void WorkArea::setItemX(int x)
 {
-    if (m_selectedCuts.size() != 1) return;
-    forEachCut([this, x](auto cut)
-    {
+    if (m_selectedCuts.size() != 1)
+        return;
+    forEachCut([this, x](auto cut) {
         if (sceneRect().contains(x, 0))
             cut->setX(x);
     });
 }
 void WorkArea::setItemY(int y)
 {
-    if (m_selectedCuts.size() != 1) return;
+    if (m_selectedCuts.size() != 1)
+        return;
 
-    forEachCut([this, y](auto cut)
-    {
+    forEachCut([this, y](auto cut) {
         if (sceneRect().contains(0, y))
             cut->setY(y);
     });
 }
 void WorkArea::setItemRow(int row)
 {
-    if (m_selectedCuts.size() != 1) return;
+    if (m_selectedCuts.size() != 1)
+        return;
 
-    forEachCut([this, row](auto cut)
-    {
-        m_animation->addFrameCount( (row - cut->row()) * cut->column());
+    forEachCut([this, row](auto cut) {
+        m_animation->addFrameCount((row - cut->row()) * cut->column());
         cut->setRow(row);
         update(cut->geometry());
     });
 }
 void WorkArea::setItemColumn(int column)
 {
-    if (m_selectedCuts.size() != 1) return;
+    if (m_selectedCuts.size() != 1)
+        return;
 
-    forEachCut([this, column](auto cut)
-    {
-        m_animation->addFrameCount( (column - cut->column()) * cut->row());
+    forEachCut([this, column](auto cut) {
+        m_animation->addFrameCount((column - cut->column()) * cut->row());
         cut->setColumn(column);
         update(cut->geometry());
     });
 }
 void WorkArea::setItemCellWidth(int cellWidth)
 {
-    if (m_selectedCuts.size() != 1) return;
+    if (m_selectedCuts.size() != 1)
+        return;
 
-    forEachCut([this, cellWidth](auto cut)
-    {
-        if (sceneRect().contains(cut->column()*cellWidth, 0))
+    forEachCut([this, cellWidth](auto cut) {
+        if (sceneRect().contains(cut->column() * cellWidth, 0))
             cut->setCellWidth(cellWidth);
     });
 }
 void WorkArea::setItemCellHeight(int cellHeight)
 {
-    if (m_selectedCuts.size() != 1) return;
+    if (m_selectedCuts.size() != 1)
+        return;
 
-    forEachCut([this, cellHeight](auto cut)
-    {
-        if (sceneRect().contains(0, cut->row()*cellHeight))
+    forEachCut([this, cellHeight](auto cut) {
+        if (sceneRect().contains(0, cut->row() * cellHeight))
             cut->setCellHeight(cellHeight);
     });
 }
@@ -562,17 +577,16 @@ void WorkArea::toggledMagnet(bool checked)
 
 void WorkArea::alignLeft()
 {
-    if (m_selectedCuts.size() <= 1 || !m_selectionGroup) return;
+    if (m_selectedCuts.size() <= 1 || !m_selectionGroup)
+        return;
 
     qreal left = width();
 
-    forEachCut([&left](auto cut)
-    {
+    forEachCut([&left](auto cut) {
         left = qMin(left, cut->geometry().left());
     });
 
-    forEachCut([left](auto cut)
-    {
+    forEachCut([left](auto cut) {
         cut->setX(left);
     });
 
@@ -581,17 +595,16 @@ void WorkArea::alignLeft()
 }
 void WorkArea::alignRight()
 {
-    if (m_selectedCuts.size() <= 1 || !m_selectionGroup) return;
+    if (m_selectedCuts.size() <= 1 || !m_selectionGroup)
+        return;
 
     qreal right = 0;
 
-    forEachCut([&right](auto cut)
-    {
+    forEachCut([&right](auto cut) {
         right = qMax(right, cut->geometry().right());
     });
 
-    forEachCut([right](auto cut)
-    {
+    forEachCut([right](auto cut) {
         cut->setX(cut->x() + right - cut->geometry().right());
     });
 
@@ -601,21 +614,20 @@ void WorkArea::alignRight()
 
 void WorkArea::alignCenterH()
 {
-    if (m_selectedCuts.size() <= 1 || !m_selectionGroup) return;
+    if (m_selectedCuts.size() <= 1 || !m_selectionGroup)
+        return;
 
     qreal centerMax = -1, centerMin = width(), center = 0;
 
-    forEachCut([&](auto cut)
-    {
+    forEachCut([&](auto cut) {
         center = cut->geometry().x() + cut->geometry().width() / 2;
         centerMin = qMin(centerMin, center);
         centerMax = qMax(centerMax, center);
     });
 
-    center =  centerMin + (centerMax - centerMin) / 2;
+    center = centerMin + (centerMax - centerMin) / 2;
 
-    forEachCut([center](auto cut)
-    {
+    forEachCut([center](auto cut) {
         cut->setX(center - cut->geometry().width() / 2);
     });
 
@@ -624,18 +636,16 @@ void WorkArea::alignCenterH()
 }
 void WorkArea::alignTop()
 {
-    if (m_selectedCuts.size() <= 1 || !m_selectionGroup) return;
-
+    if (m_selectedCuts.size() <= 1 || !m_selectionGroup)
+        return;
 
     qreal top = height();
 
-    forEachCut([&top](auto cut)
-    {
+    forEachCut([&top](auto cut) {
         top = qMin(top, cut->geometry().top());
     });
 
-    forEachCut([top](auto cut)
-    {
+    forEachCut([top](auto cut) {
         cut->setY(top);
     });
 
@@ -644,17 +654,16 @@ void WorkArea::alignTop()
 }
 void WorkArea::alignBottom()
 {
-    if (m_selectedCuts.size() <= 1 || !m_selectionGroup) return;
+    if (m_selectedCuts.size() <= 1 || !m_selectionGroup)
+        return;
 
     qreal bottom = 0;
 
-    forEachCut([&bottom](auto cut)
-    {
+    forEachCut([&bottom](auto cut) {
         bottom = qMax(bottom, cut->geometry().bottom());
     });
 
-    forEachCut([bottom](auto cut)
-    {
+    forEachCut([bottom](auto cut) {
         cut->setY(cut->y() + bottom - cut->geometry().bottom());
     });
 
@@ -663,12 +672,12 @@ void WorkArea::alignBottom()
 }
 void WorkArea::alignCenterV()
 {
-    if (m_selectedCuts.size() <= 1 || !m_selectionGroup) return;
+    if (m_selectedCuts.size() <= 1 || !m_selectionGroup)
+        return;
 
     qreal centerMax = -1, centerMin = height(), center = 0;
 
-    forEachCut([&](auto cut)
-    {
+    forEachCut([&](auto cut) {
         center = cut->geometry().y() + cut->geometry().height() / 2;
         centerMin = qMin(centerMin, center);
         centerMax = qMax(centerMax, center);
@@ -676,8 +685,7 @@ void WorkArea::alignCenterV()
 
     center = centerMin + (centerMax - centerMin) / 2;
 
-    forEachCut([center](auto cut)
-    {
+    forEachCut([center](auto cut) {
         cut->setY(center - cut->geometry().height() / 2);
     });
 
@@ -687,63 +695,62 @@ void WorkArea::alignCenterV()
 
 void WorkArea::alignContentLeft()
 {
-    if (m_selectedCuts.size() <= 0) return;
+    if (m_selectedCuts.size() <= 0)
+        return;
 
-    forEachCut([this](auto cut)
-    {
+    forEachCut([this](auto cut) {
         cut->setX(cut->x() + contentMinX(cut));
     });
 }
 void WorkArea::alignContentRight()
 {
-    if (m_selectedCuts.size() <= 0) return;
+    if (m_selectedCuts.size() <= 0)
+        return;
 
-    forEachCut([this](auto cut)
-    {
-        cut->setX((int)cut->x() -  ((int)cut->width() - 1 - contentMaxX(cut)));
+    forEachCut([this](auto cut) {
+        cut->setX((int)cut->x() - ((int)cut->width() - 1 - contentMaxX(cut)));
     });
 }
 void WorkArea::alignContentCenterH()
 {
-    if (m_selectedCuts.size() <= 0) return;
+    if (m_selectedCuts.size() <= 0)
+        return;
     int xMin = 0, xMax = 0;
-    forEachCut([&](auto cut)
-    {
+    forEachCut([&](auto cut) {
         xMin = contentMinX(cut);
         xMax = contentMaxX(cut);
-        cut->setX( cut->x() + xMin + (xMax - xMin) / 2 - cut->width() / 2 );
+        cut->setX(cut->x() + xMin + (xMax - xMin) / 2 - cut->width() / 2);
     });
-
 }
 void WorkArea::alignContentTop()
 {
-    if (m_selectedCuts.size() <= 0) return;
+    if (m_selectedCuts.size() <= 0)
+        return;
 
-    forEachCut([this](auto cut)
-    {
+    forEachCut([this](auto cut) {
         cut->setY(cut->y() + contentMinY(cut));
     });
 }
 void WorkArea::alignContentBottom()
 {
-    if (m_selectedCuts.size() <= 0) return;
+    if (m_selectedCuts.size() <= 0)
+        return;
 
-    forEachCut([this](auto cut)
-    {
-        cut->setY((int)cut->y() -  ((int)cut->height() - 1 - contentMaxY(cut)));
+    forEachCut([this](auto cut) {
+        cut->setY((int)cut->y() - ((int)cut->height() - 1 - contentMaxY(cut)));
     });
 }
 void WorkArea::alignContentCenterV()
 {
-    if (m_selectedCuts.size() <= 0) return;
+    if (m_selectedCuts.size() <= 0)
+        return;
 
     int yMin = 0, yMax = 0;
 
-    forEachCut([&](auto cut)
-    {
+    forEachCut([&](auto cut) {
         yMin = contentMinY(cut);
         yMax = contentMaxY(cut);
-        cut->setY( cut->y() + yMin + (yMax - yMin) / 2 - cut->height() / 2 );
+        cut->setY(cut->y() + yMin + (yMax - yMin) / 2 - cut->height() / 2);
     });
 }
 int WorkArea::contentMaxX(Cut *cut)
@@ -752,7 +759,8 @@ int WorkArea::contentMaxX(Cut *cut)
 
     for (int x = image.width() - 1; x > 0; x--)
         for (int y = 0; y < image.height() - 1; y++)
-            if (qAlpha(image.pixel(x, y))) return x;
+            if (qAlpha(image.pixel(x, y)))
+                return x;
 
     return cut->geometry().right();
 }
@@ -762,7 +770,8 @@ int WorkArea::contentMinX(Cut *cut)
 
     for (int x = 0; x < image.width() - 1; x++)
         for (int y = 0; y < image.height() - 1; y++)
-            if (qAlpha(image.pixel(x, y))) return x;
+            if (qAlpha(image.pixel(x, y)))
+                return x;
 
     return cut->geometry().left();
 }
@@ -772,7 +781,8 @@ int WorkArea::contentMaxY(Cut *cut)
 
     for (int y = image.height() - 1; y > 0; y--)
         for (int x = 0; x < image.width() - 1; x++)
-            if (qAlpha(image.pixel(x, y))) return y;
+            if (qAlpha(image.pixel(x, y)))
+                return y;
 
     return cut->geometry().bottom();
 }
@@ -782,7 +792,8 @@ int WorkArea::contentMinY(Cut *cut)
 
     for (int y = 0; y < image.height() - 1; y++)
         for (int x = 0; x < image.width() - 1; x++)
-            if (qAlpha(image.pixel(x, y))) return y;
+            if (qAlpha(image.pixel(x, y)))
+                return y;
 
     return cut->geometry().top();
 }
@@ -817,8 +828,7 @@ void WorkArea::deleteSelection()
             m_selectionGroup = nullptr;
         }
 
-        forEachCut([this](auto cut)
-        {
+        forEachCut([this](auto cut) {
             removeItem(cut);
             deleteCut(cut);
         });

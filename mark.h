@@ -28,22 +28,26 @@ Under the following conditions:
 #ifndef MARK_H
 #define MARK_H
 
+#include <QDebug>
 #include <QGraphicsObject>
 #include <QGraphicsScene>
 #include <QGraphicsSceneEvent>
 #include <QPainter>
 
-#include <QDebug>
-
 class Mark : public QGraphicsObject
 {
     Q_OBJECT
     Q_ENUMS(MarkOrientation);
-public:
-    enum MarkOrientation {MarkHorizontal=0,MarkVertical=1};
+
+  public:
+    enum MarkOrientation {
+        MarkHorizontal = 0,
+        MarkVertical = 1
+    };
 
     // Constructor
-    explicit Mark(MarkOrientation orientation,int position, int sceneWidth, int sceneHeight, QGraphicsItem *parent = 0);
+    explicit Mark(MarkOrientation orientation, int position, int sceneWidth, int sceneHeight,
+                  QGraphicsItem *parent = 0);
 
     // Getter  / Setter
     void setOrientation(Mark::MarkOrientation orientation);
@@ -58,7 +62,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
 
-private:
+  private:
     // Methods
     QPoint beginPoint() const;
     QPoint endPoint() const;
@@ -69,11 +73,10 @@ private:
     int m_sceneWidth;
     int m_sceneHeight;
 
-signals:
+  signals:
     void positionChange();
 
-public slots:
-
+  public slots:
 };
 
 #endif // MARK_H

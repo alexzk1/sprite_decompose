@@ -28,21 +28,21 @@ Under the following conditions:
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include <QObject>
-#include <QTimerEvent>
-#include <QList>
-#include <QGraphicsScene>
-#include <QPointer>
 #include "cut.h"
-#include "mark.h"
 #include "frame.h"
+#include "mark.h"
 
 #include <QDebug>
+#include <QGraphicsScene>
+#include <QList>
+#include <QObject>
+#include <QPointer>
+#include <QTimerEvent>
 
 class Animation : public QObject
 {
     Q_OBJECT
-public:
+  public:
     // Constructor
     explicit Animation(QObject *parent = nullptr);
 
@@ -50,59 +50,58 @@ public:
     void setTitle(const QString &title);
     void setBackground(QPixmap background);
     void setMagnetism(bool magnetism);
-    void setMarks(QList<QPointer<Mark>> *marks);     // Workarea Marks pointer
-    void addFrameCount(int count);          // Add <count> Frames in Animation
-    void addCut(Cut* cut);
+    void setMarks(QList<QPointer<Mark>> *marks); // Workarea Marks pointer
+    void addFrameCount(int count);               // Add <count> Frames in Animation
+    void addCut(Cut *cut);
 
     // Getter
     bool magnetism() const;
     QString title() const;
-    QGraphicsScene* scene() const;
+    QGraphicsScene *scene() const;
     QList<QPointer<Cut>> &cuts();
     int frameCount() const;
     int speed() const;
 
     // Public Methods
-    void magnetize(QPointF *p);              // Determine where to magnetize the point
-    void magnetize(QRect *r);               // Determine where to magnetize the Cut
+    void magnetize(QPointF *p); // Determine where to magnetize the point
+    void magnetize(QRect *r);   // Determine where to magnetize the Cut
 
     void deleteCut(Cut *cut);
 
-private:
-    bool intersectMargin(int pos);          // Number is in margin
-    void timerEvent(QTimerEvent* event) override;
+  private:
+    bool intersectMargin(int pos); // Number is in margin
+    void timerEvent(QTimerEvent *event) override;
     void showFrame();
     Frame getFrame(int frameId);
 
-private:
-    QString m_title;                        // Animation Title
-    QPixmap m_background;                   // Original SpriteSheet
-    QGraphicsScene *m_scene;                // Scene
+  private:
+    QString m_title;         // Animation Title
+    QPixmap m_background;    // Original SpriteSheet
+    QGraphicsScene *m_scene; // Scene
     // Magnetism
-    int m_magnetMargin;                     // Magnetism margin
-    bool m_magnetism;                       // Magnetism active
+    int m_magnetMargin; // Magnetism margin
+    bool m_magnetism;   // Magnetism active
     // Animation Preview
-    bool m_play;                            // Animation is playing
-    int m_animationFrameIndex;              // Current Animation Frame Index
-    QGraphicsItem *m_animationFrameItem;    // Current Animation Frame Item
-    int m_animationTimerId;                 // Animation Timer
-    int m_frameCount;                       // Total Frames in Animation
-    int m_speed;                            // Animation play speed
+    bool m_play;                         // Animation is playing
+    int m_animationFrameIndex;           // Current Animation Frame Index
+    QGraphicsItem *m_animationFrameItem; // Current Animation Frame Item
+    int m_animationTimerId;              // Animation Timer
+    int m_frameCount;                    // Total Frames in Animation
+    int m_speed;                         // Animation play speed
     // Resources
-    QList<QPointer<Cut>> m_cuts{};                     // Cut List
-    QList<QPointer<Mark>> *m_marks{nullptr};                  // WorkArea Marks' List
+    QList<QPointer<Cut>> m_cuts{};           // Cut List
+    QList<QPointer<Mark>> *m_marks{nullptr}; // WorkArea Marks' List
 
-signals:
+  signals:
     void frameCountUpdated(int frameCount);
 
-public slots:
+  public slots:
     void playAnimation(bool play);
     void showNextFrame();
     void showPreviousFrame();
     void showLastFrame();
     void showFirstFrame();
     void setSpeed(int speed);
-
 };
 
 #endif // ANIMATION_H

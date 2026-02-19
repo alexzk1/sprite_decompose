@@ -28,44 +28,42 @@ Under the following conditions:
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <QMainWindow>
-#include <QDesktopWidget>
-#include <QFileDialog>
-#include <QColorDialog>
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QtXml>
-#include <QCloseEvent>
-
 #include "aboutdialog.h"
 #include "animation.h"
-#include "workarea.h"
 #include "cut.h"
 #include "mark.h"
 #include "saveable_widget.h"
+#include "workarea.h"
 
+#include <QCloseEvent>
+#include <QColorDialog>
 #include <QDebug>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QMainWindow>
+#include <QMessageBox>
 
-namespace Ui
-{
-    class Interface;
+#include <QtXml>
+
+namespace Ui {
+class Interface;
 }
 
 class Interface : public QMainWindow, utility::SaveableWidget<Interface>
 {
     Q_OBJECT
 
-public:
+  public:
     // Constructor / Destructor
     explicit Interface(QWidget *parent = nullptr);
     ~Interface() override;
 
-protected:
+  protected:
     void closeEvent(QCloseEvent *event) override;
-    void changeEvent(QEvent* event) override;
-    void recurseWrite(QSettings& settings, QObject* object) override;
-    void recurseRead(QSettings& settings, QObject* object) override;
-public slots:
+    void changeEvent(QEvent *event) override;
+    void recurseWrite(QSettings &settings, QObject *object) override;
+    void recurseRead(QSettings &settings, QObject *object) override;
+  public slots:
     // Tools
     void tool_normal();
     void tool_zoomIn();
@@ -107,46 +105,47 @@ public slots:
     // Animation
     void animation_add();
     void animation_remove();
-    void animation_changeTitle(const QString& title);
+    void animation_changeTitle(const QString &title);
 
     // Workarea
     void pickerColor(const QRgb &color);
-    void itemSelected(Cut* selection);
+    void itemSelected(Cut *selection);
     void multipleSelection();
 
     // Animation
     void frameCountUpdated(int frameCount);
 
-private:
-    Ui::Interface *ui;              // Interface
+  private:
+    Ui::Interface *ui;                       // Interface
     QList<QPointer<Animation>> m_animations; // Animations List
-    WorkArea* m_workarea;           // WorkArea
-    QAction *m_currentToolSelected; // Tool selected
-    qreal m_zoomRatio;              // Zoom Scene ratio
-    qreal m_zoomViewRatio;          // Zoom View ratio
-    QString m_imageFilename;        // Background image (sprite sheet) filename
-    QString m_xmlFilename;         // Current XML file
+    WorkArea *m_workarea;                    // WorkArea
+    QAction *m_currentToolSelected;          // Tool selected
+    qreal m_zoomRatio;                       // Zoom Scene ratio
+    qreal m_zoomViewRatio;                   // Zoom View ratio
+    QString m_imageFilename;                 // Background image (sprite sheet) filename
+    QString m_xmlFilename;                   // Current XML file
     bool m_workModified;
     bool m_selectAnimation;
     AboutDialog *m_aboutDialog;
     QString lastImagePath{};
-private:
+
+  private:
     int saveModification();
     void saveAll(const QString &filename);
     void openXMl(const QString &filename);
     void openImage(const QString &filename, bool createDefaultAnimation = true);
-    Animation* addAnimation(const QString &title);
+    Animation *addAnimation(const QString &title);
     void removeAnimation(int index);
-    void showCutRectInfo(Cut* cut);
-    void showCutGridInfo(Cut* cut);
+    void showCutRectInfo(Cut *cut);
+    void showCutGridInfo(Cut *cut);
     void closeAll();
 
     // Translation
     void fillLanguages();
     void retranslate();
-    QMenu* m_languages;
+    QMenu *m_languages;
 
-private slots:
+  private slots:
     void selectAnimation(int index);
 };
 

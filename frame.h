@@ -32,10 +32,10 @@ Under the following conditions:
 
 class Frame
 {
-public:
+  public:
     // Constructor
     Frame();
-    Frame(QPixmap image,int id);
+    Frame(QPixmap image, int id);
 
     // Setter
     void setImage(QPixmap image);
@@ -45,7 +45,7 @@ public:
     QPixmap image();
     int id();
 
-private:
+  private:
     QPixmap m_image;
     int m_id;
 };

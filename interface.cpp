@@ -1,19 +1,56 @@
 #include "interface.h"
-#include "ui_interface.h"
+
 #include "application.h"
+
+#include "ui_interface.h"
+
 #include <QAction>
+#include <QActionGroup>
+#include <QApplication>
+#include <QCheckBox>
+#include <QDir>
+#include <QDockWidget>
+#include <QFileInfo>
 #include <QLabel>
 #include <QMenu>
-#include <QDockWidget>
-#include <QStatusBar>
-#include <QToolBar>
-#include <QDir>
-#include <QFileInfo>
-#include <QTimer>
-#include <QToolButton>
-#include <QSpacerItem>
 #include <QPushButton>
-#include <QCheckBox>
+#include <QSpacerItem>
+#include <QStatusBar>
+#include <QTimer>
+#include <QToolBar>
+#include <QToolButton>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    #include <QGuiApplication>
+    #include <QScreen>
+#else
+    #include <QDesktopWidget>
+#endif
+namespace {
+void centerWindow(QWidget *widget)
+{
+    if (!widget)
+    {
+        return;
+    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // Qt6
+    QScreen *screen = QGuiApplication::primaryScreen();
+    if (screen)
+    {
+        QRect frect = widget->frameGeometry();
+        frect.moveCenter(screen->availableGeometry().center());
+        widget->move(frect.topLeft());
+    }
+#else
+    // Qt5
+    QRect frect = widget->frameGeometry();
+    frect.moveCenter(QApplication::desktop()->availableGeometry().center());
+    widget->move(frect.topLeft());
+#endif
+}
+} // namespace
 
 Interface::Interface(QWidget *parent) :
     QMainWindow(parent),
@@ -26,9 +63,7 @@ Interface::Interface(QWidget *parent) :
      */
 
     // Center Window on Screen
-    QRect frect = frameGeometry();
-    frect.moveCenter(QDesktopWidget().availableGeometry().center());
-    move(frect.topLeft());
+    centerWindow(this);
 
     // menuTools
     m_currentToolSelected = ui->toolNormal;
@@ -90,20 +125,28 @@ Interface::Interface(QWidget *parent) :
     connect(ui->cutGrid_B_Add, SIGNAL(clicked()), this, SLOT(addCutGrid()));
     connect(ui->cutGrid_I_Magnetism, SIGNAL(toggled(bool)), m_workarea, SLOT(toggledMagnet(bool)));
     connect(ui->cutGrid_B_Remove, SIGNAL(clicked()), m_workarea, SLOT(deleteSelection()));
-    connect(ui->cutGrid_I_CellHeight, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemCellHeight(int)));
-    connect(ui->cutGrid_I_CellWidth, SIGNAL(valueChanged(int)), m_workarea, SLOT(setItemCellWidth(int)));
+    connect(ui->cutGrid_I_CellHeight, SIGNAL(valueChanged(int)), m_workarea,
+            SLOT(setItemCellHeight(int)));
+    connect(ui->cutGrid_I_CellWidth, SIGNAL(valueChanged(int)), m_workarea,
+            SLOT(setItemCellWidth(int)));
 
     // Link configCutGrid & configCutRect
-    connect(ui->cutGrid_I_Magnetism, SIGNAL(toggled(bool)), ui->cutRect_I_Magnetism, SLOT(setChecked(bool)));
-    connect(ui->cutRect_I_Magnetism, SIGNAL(toggled(bool)), ui->cutGrid_I_Magnetism, SLOT(setChecked(bool)));
+    connect(ui->cutGrid_I_Magnetism, SIGNAL(toggled(bool)), ui->cutRect_I_Magnetism,
+            SLOT(setChecked(bool)));
+    connect(ui->cutRect_I_Magnetism, SIGNAL(toggled(bool)), ui->cutGrid_I_Magnetism,
+            SLOT(setChecked(bool)));
 
     // configCutAuto
-    connect(ui->cutAuto_I_Tolerance, SIGNAL(valueChanged(int)), m_workarea, SLOT(changeTolerance(int)));
-    connect(ui->cutAuto_I_ConstraintHeight, SIGNAL(toggled(bool)), m_workarea, SLOT(changeConstraintHeight(bool)));
-    connect(ui->cutAuto_I_ConstraintWidth, SIGNAL(toggled(bool)), m_workarea, SLOT(changeConstraintWidth(bool)));
+    connect(ui->cutAuto_I_Tolerance, SIGNAL(valueChanged(int)), m_workarea,
+            SLOT(changeTolerance(int)));
+    connect(ui->cutAuto_I_ConstraintHeight, SIGNAL(toggled(bool)), m_workarea,
+            SLOT(changeConstraintHeight(bool)));
+    connect(ui->cutAuto_I_ConstraintWidth, SIGNAL(toggled(bool)), m_workarea,
+            SLOT(changeConstraintWidth(bool)));
 
     // configMark
-    connect(ui->mark_I_Orientation, SIGNAL(currentIndexChanged(int)), this, SLOT(mark_OrientationChange(int)));
+    connect(ui->mark_I_Orientation, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(mark_OrientationChange(int)));
     connect(ui->mark_B_Add, SIGNAL(clicked()), this, SLOT(addMark()));
 
     // configPicker
@@ -117,8 +160,10 @@ Interface::Interface(QWidget *parent) :
     // Animation Panel
     connect(ui->animation_I_Add, SIGNAL(clicked()), this, SLOT(animation_add()));
     connect(ui->animation_I_Remove, SIGNAL(clicked()), this, SLOT(animation_remove()));
-    connect(ui->animation_I_List, SIGNAL(currentIndexChanged(int)), this, SLOT(selectAnimation(int)));
-    connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), this, SLOT(animation_changeTitle(QString)));
+    connect(ui->animation_I_List, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(selectAnimation(int)));
+    connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), this,
+            SLOT(animation_changeTitle(QString)));
 
     // Alignements
     connect(ui->align_sceneLeft, SIGNAL(clicked()), m_workarea, SLOT(alignLeft()));
@@ -137,7 +182,7 @@ Interface::Interface(QWidget *parent) :
 
     // WorkArea
     connect(m_workarea, SIGNAL(pickerColor(QRgb)), this, SLOT(pickerColor(QRgb)));
-    connect(m_workarea, SIGNAL(itemSelected(Cut*)), this, SLOT(itemSelected(Cut*)));
+    connect(m_workarea, SIGNAL(itemSelected(Cut *)), this, SLOT(itemSelected(Cut *)));
     connect(m_workarea, SIGNAL(multipleSelection()), this, SLOT(multipleSelection()));
 
     /*
@@ -204,7 +249,7 @@ void Interface::recurseWrite(QSettings &settings, QObject *)
 void Interface::recurseRead(QSettings &settings, QObject *)
 {
     lastImagePath = settings.value("LastImagePath", QDir::homePath()).toString();
-    auto lang     = settings.value("LastLang", "en_us").toString();
+    auto lang = settings.value("LastLang", "en_us").toString();
     if (m_languages->actions().size())
     {
         auto act = m_languages->actions().first();
@@ -276,7 +321,7 @@ void Interface::tool_cutRect()
         m_workarea->setTool(WorkArea::ToolCutRect);
 
         // StatsBar
-        ui->statusBar->showMessage(trUtf8("Ajouter un découpage rectangulaire"));
+        ui->statusBar->showMessage(tr("Ajouter un découpage rectangulaire"));
     }
     // Already selected
     else
@@ -297,7 +342,7 @@ void Interface::tool_cutGrid()
         m_workarea->setTool(WorkArea::ToolCutGrid);
 
         // StatsBar
-        ui->statusBar->showMessage(trUtf8("Ajouter un découpage en grille"));
+        ui->statusBar->showMessage(tr("Ajouter un découpage en grille"));
     }
     // Already selected
     else
@@ -319,7 +364,7 @@ void Interface::tool_mark()
         m_workarea->setTool(WorkArea::ToolMarkH);
 
         // StatsBar
-        ui->statusBar->showMessage(trUtf8("Ajouter un repère"));
+        ui->statusBar->showMessage(tr("Ajouter un repère"));
     }
     // Already selected
     else
@@ -340,7 +385,7 @@ void Interface::tool_picker()
         m_workarea->setTool(WorkArea::ToolPicker);
 
         // StatsBar
-        ui->statusBar->showMessage(trUtf8("Choisir la couleur de transparence"));
+        ui->statusBar->showMessage(tr("Choisir la couleur de transparence"));
     }
     // Already selected
     else
@@ -361,7 +406,7 @@ void Interface::tool_cutAuto()
         m_workarea->setTool(WorkArea::ToolCutAuto);
 
         // StatsBar
-        ui->statusBar->showMessage(trUtf8("Définir une zone à découper automatiquement"));
+        ui->statusBar->showMessage(tr("Définir une zone à découper automatiquement"));
     }
     // Already selected
     else
@@ -374,11 +419,15 @@ void Interface::menu_open()
     // Document opened must be saved
     if (m_workModified && !m_imageFilename.isEmpty())
     {
-        if (saveModification() < 0) return;
+        if (saveModification() < 0)
+            return;
     }
 
     // Open file
-    QString filename = QFileDialog::getOpenFileName(this, trUtf8("Ouvrir un fichier"), lastImagePath, trUtf8("Tous les fichiers(*.*);;Fichier image (*.png *.jpg *.bmp *.gif);;Fichier XML(*.xml)")); //*/"/Users/Nicolas/Pictures/Resources/Sprite/NessSBBB.png";
+    QString filename = QFileDialog::getOpenFileName(
+      this, tr("Ouvrir un fichier"), lastImagePath,
+      tr("Tous les fichiers(*.*);;Fichier image (*.png *.jpg *.bmp *.gif);;Fichier "
+         "XML(*.xml)")); //*/"/Users/Nicolas/Pictures/Resources/Sprite/NessSBBB.png";
 
     if (!filename.isEmpty())
     {
@@ -388,11 +437,12 @@ void Interface::menu_open()
         QString extension = filename.right(3).toLower();
         if (extension == "xml")
             openXMl(filename);
+        else if (extension == "png" || extension == "jpg" || extension == "bmp"
+                 || extension == "gif")
+            openImage(filename);
         else
-            if (extension == "png" || extension == "jpg" || extension == "bmp" || extension == "gif")
-                openImage(filename);
-            else
-                QMessageBox::warning(this, trUtf8("Impossible d'ouvrir le fichier"), trUtf8("Type de fichier non supporté"));
+            QMessageBox::warning(this, tr("Impossible d'ouvrir le fichier"),
+                                 tr("Type de fichier non supporté"));
 
         m_workModified = false;
         setWindowModified(false);
@@ -409,7 +459,8 @@ void Interface::menu_save()
 
 void Interface::menu_saveAs()
 {
-    QString saveFile = QFileDialog::getSaveFileName(this, trUtf8("Enregistrer sous..."), lastImagePath, trUtf8("Fichier XML(*.xml)"));
+    QString saveFile = QFileDialog::getSaveFileName(this, tr("Enregistrer sous..."), lastImagePath,
+                                                    tr("Fichier XML(*.xml)"));
     if (!saveFile.isEmpty())
     {
         if (!saveFile.endsWith(".xml", Qt::CaseInsensitive))
@@ -465,7 +516,9 @@ void Interface::addCutRect()
 {
     if (ui->toolCutRect->isEnabled() && !m_imageFilename.isEmpty())
     {
-        m_workarea->addCut(QRectF(ui->cutRect_I_X->value(), ui->cutRect_I_Y->value(), ui->cutRect_I_Width->value(), ui->cutRect_I_Height->value()), WorkArea::TypeCutRect);
+        m_workarea->addCut(QRectF(ui->cutRect_I_X->value(), ui->cutRect_I_Y->value(),
+                                  ui->cutRect_I_Width->value(), ui->cutRect_I_Height->value()),
+                           WorkArea::TypeCutRect);
         m_workModified = true;
         setWindowModified(true);
     }
@@ -474,15 +527,18 @@ void Interface::addCutGrid()
 {
     if (ui->toolCutGrid->isEnabled() && !m_imageFilename.isEmpty())
     {
-        m_workarea->addCut(QRectF(ui->cutGrid_I_X->value(), ui->cutGrid_I_Y->value(), ui->cutGrid_I_Width->value(), ui->cutGrid_I_Height->value()), WorkArea::TypeCutGrid);
+        m_workarea->addCut(QRectF(ui->cutGrid_I_X->value(), ui->cutGrid_I_Y->value(),
+                                  ui->cutGrid_I_Width->value(), ui->cutGrid_I_Height->value()),
+                           WorkArea::TypeCutGrid);
         m_workModified = true;
         setWindowModified(true);
     }
 }
 void Interface::cut_GeometryChange()
 {
-    auto *from = qobject_cast<Cut*>(sender());
-    if (!from) return;
+    auto *from = qobject_cast<Cut *>(sender());
+    if (!from)
+        return;
 
     if (from->row() > 1 || from->column() > 1)
         showCutGridInfo(from);
@@ -493,7 +549,6 @@ void Interface::cut_GeometryChange()
     setWindowModified(true);
 }
 
-
 // configMark
 void Interface::addMark()
 {
@@ -502,9 +557,8 @@ void Interface::addMark()
         if (ui->mark_I_Orientation->currentIndex() == Mark::MarkHorizontal)
             m_workarea->addMark(ui->mark_I_Y->text().toInt(), Mark::MarkHorizontal);
 
-        else
-            if (ui->mark_I_Orientation->currentIndex() == Mark::MarkVertical)
-                m_workarea->addMark(ui->mark_I_X->text().toInt(), Mark::MarkVertical);
+        else if (ui->mark_I_Orientation->currentIndex() == Mark::MarkVertical)
+            m_workarea->addMark(ui->mark_I_X->text().toInt(), Mark::MarkVertical);
     }
 }
 
@@ -543,8 +597,9 @@ void Interface::mark_OrientationChange(int index)
 
 void Interface::mark_PositionChange()
 {
-    auto *from = qobject_cast<Mark*>(sender());
-    if (!from) return;
+    auto *from = qobject_cast<Mark *>(sender());
+    if (!from)
+        return;
 
     switch (from->orientation())
     {
@@ -571,9 +626,9 @@ void Interface::picker_SetMaskColor()
 {
     if (ui->toolPicker->isEnabled() && !m_imageFilename.isEmpty())
     {
-        QByteArray  red = ui->picker_I_Color->text().mid(0, 2).toLatin1(),
-                    green = ui->picker_I_Color->text().mid(2, 2).toLatin1(),
-                    blue = ui->picker_I_Color->text().mid(4, 2).toLatin1();
+        QByteArray red = ui->picker_I_Color->text().mid(0, 2).toLatin1(),
+                   green = ui->picker_I_Color->text().mid(2, 2).toLatin1(),
+                   blue = ui->picker_I_Color->text().mid(4, 2).toLatin1();
         QColor color(red.toInt(nullptr, 16), green.toInt(nullptr, 16), blue.toInt(nullptr, 16));
         if (color.isValid())
         {
@@ -607,10 +662,12 @@ void Interface::viewer_zoomOut()
 // Animation Panel
 void Interface::animation_add()
 {
-    if (m_imageFilename.isEmpty()) return;
+    if (m_imageFilename.isEmpty())
+        return;
 
     bool ok;
-    QString animationName = QInputDialog::getText(this, tr("Nouvelle animation"), tr("Nom de l'animation:"), QLineEdit::Normal, QString(), &ok);
+    QString animationName = QInputDialog::getText(
+      this, tr("Nouvelle animation"), tr("Nom de l'animation:"), QLineEdit::Normal, QString(), &ok);
     if (ok && !animationName.isEmpty())
     {
         addAnimation(animationName);
@@ -620,16 +677,18 @@ void Interface::animation_add()
 }
 void Interface::animation_remove()
 {
-    if (m_imageFilename.isEmpty()) return;
+    if (m_imageFilename.isEmpty())
+        return;
 
     removeAnimation(ui->animation_I_List->currentIndex());
     m_workModified = true;
     setWindowModified(true);
 }
 
-void Interface::animation_changeTitle(const QString& title)
+void Interface::animation_changeTitle(const QString &title)
 {
-    if (m_imageFilename.isEmpty()) return;
+    if (m_imageFilename.isEmpty())
+        return;
 
     ui->animation_I_List->setItemText(ui->animation_I_List->currentIndex(), title);
     if (!m_selectAnimation)
@@ -640,7 +699,7 @@ void Interface::animation_changeTitle(const QString& title)
 }
 
 // WorkArea
-void Interface::pickerColor(const QRgb& color)
+void Interface::pickerColor(const QRgb &color)
 {
     if (!m_imageFilename.isEmpty())
     {
@@ -650,7 +709,8 @@ void Interface::pickerColor(const QRgb& color)
 }
 void Interface::itemSelected(Cut *selection)
 {
-    if (!selection) return;
+    if (!selection)
+        return;
     if (selection->row() > 1 || selection->column() > 1)
     {
         ui->configurePanel->setCurrentIndex(1);
@@ -680,12 +740,12 @@ void Interface::frameCountUpdated(int frameCount)
 int Interface::saveModification()
 {
     QMessageBox msgBox;
-    msgBox.setText(trUtf8("Les animations ont été modifiées"));
-    msgBox.setInformativeText(trUtf8("Voulez-vous enregistrer les changements?"));
+    msgBox.setText(tr("Les animations ont été modifiées"));
+    msgBox.setInformativeText(tr("Voulez-vous enregistrer les changements?"));
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-    msgBox.setButtonText(QMessageBox::Save, trUtf8("Enregistrer"));
-    msgBox.setButtonText(QMessageBox::Discard, trUtf8("Ignorer"));
-    msgBox.setButtonText(QMessageBox::Cancel, trUtf8("Annuler"));
+    msgBox.setButtonText(QMessageBox::Save, tr("Enregistrer"));
+    msgBox.setButtonText(QMessageBox::Discard, tr("Ignorer"));
+    msgBox.setButtonText(QMessageBox::Cancel, tr("Annuler"));
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
 
@@ -717,7 +777,7 @@ void Interface::saveAll(const QString &filename)
     QFile file(filename);
     if (!file.open(QFile::WriteOnly))
     {
-        QMessageBox::critical(this, trUtf8("Erreur"), trUtf8("Impossible d'enregistrer le fichier"));
+        QMessageBox::critical(this, tr("Erreur"), tr("Impossible d'enregistrer le fichier"));
         return;
     }
 
@@ -732,14 +792,14 @@ void Interface::saveAll(const QString &filename)
     // temp
     Animation *animation = nullptr;
 
-    for (const auto& m_animation : m_animations)
+    for (const auto &m_animation : m_animations)
     {
         animation = m_animation;
         QDomElement animationElm = doc.createElement("animation");
         animationElm.setAttribute("title", animation->title());
         animationElm.setAttribute("delay", animation->speed());
 
-        for (const auto& cut : animation->cuts())
+        for (const auto &cut : animation->cuts())
         {
             QDomElement cutElm = doc.createElement("cut");
             cutElm.setAttribute("x", cut->x());
@@ -754,7 +814,7 @@ void Interface::saveAll(const QString &filename)
         root.appendChild(animationElm);
     }
 
-    QTextStream ts( &file );
+    QTextStream ts(&file);
     ts << doc.toString();
     file.close();
 
@@ -768,7 +828,7 @@ void Interface::openXMl(const QString &filename)
     QFile file(filename);
     if (!file.open(QFile::ReadOnly))
     {
-        QMessageBox::critical(this, trUtf8("Erreur"), trUtf8("Impossible d'ouvir le fichier"));
+        QMessageBox::critical(this, tr("Erreur"), tr("Impossible d'ouvir le fichier"));
         return;
     }
 
@@ -782,14 +842,16 @@ void Interface::openXMl(const QString &filename)
     if (!doc.setContent(&file))
     {
         file.close();
-        QMessageBox::critical(this, trUtf8("Erreur"), trUtf8("Impossible d'ouvir le fichier"));
+        QMessageBox::critical(this, tr("Erreur"), tr("Impossible d'ouvir le fichier"));
         return;
     }
     QDomElement root = doc.documentElement();
-    if (root.tagName() != "sprites" || !root.hasAttribute("image") || !root.hasAttribute("transparentColor"))
+    if (root.tagName() != "sprites" || !root.hasAttribute("image")
+        || !root.hasAttribute("transparentColor"))
     {
         file.close();
-        QMessageBox::critical(this, trUtf8("Format non reconnu"), trUtf8("Le contenu de ce fichier est invalide"));
+        QMessageBox::critical(this, tr("Format non reconnu"),
+                              tr("Le contenu de ce fichier est invalide"));
         return;
     }
 
@@ -798,10 +860,11 @@ void Interface::openXMl(const QString &filename)
 
     // Animations
     QDomNode n = root.firstChild();
-    while ( !n.isNull() )
+    while (!n.isNull())
     {
         QDomElement e = n.toElement();
-        if ( !e.isNull() && e.tagName() == "animation" && e.hasAttribute("title") && e.hasAttribute("delay"))
+        if (!e.isNull() && e.tagName() == "animation" && e.hasAttribute("title")
+            && e.hasAttribute("delay"))
         {
             Animation *animation = addAnimation(e.attribute("title"));
             animation->setSpeed(e.attribute("delay").toInt());
@@ -811,23 +874,22 @@ void Interface::openXMl(const QString &filename)
             while (!nn.isNull())
             {
                 QDomElement ee = nn.toElement();
-                if (!ee.isNull()
-                        && ee.tagName() == "cut"
-                        && ee.hasAttribute("x")
-                        && ee.hasAttribute("y")
-                        && ee.hasAttribute("w")
-                        && ee.hasAttribute("h")
-                        && ee.hasAttribute("row")
-                        && ee.hasAttribute("col")
-                   )
+                if (!ee.isNull() && ee.tagName() == "cut" && ee.hasAttribute("x")
+                    && ee.hasAttribute("y") && ee.hasAttribute("w") && ee.hasAttribute("h")
+                    && ee.hasAttribute("row") && ee.hasAttribute("col"))
                 {
                     m_workarea->setItemRow(ee.attribute("row").toInt());
                     m_workarea->setItemColumn(ee.attribute("column").toInt());
 
                     if (ee.attribute("row").toInt() > 1 || ee.attribute("column").toInt() > 1)
-                        m_workarea->addCut(QRectF(ee.attribute("x").toFloat(), ee.attribute("y").toFloat(), ee.attribute("w").toFloat(), ee.attribute("h").toFloat()), WorkArea::TypeCutGrid);
+                        m_workarea->addCut(
+                          QRectF(ee.attribute("x").toFloat(), ee.attribute("y").toFloat(),
+                                 ee.attribute("w").toFloat(), ee.attribute("h").toFloat()),
+                          WorkArea::TypeCutGrid);
                     else
-                        m_workarea->addCut(QRectF(ee.attribute("x").toFloat(), ee.attribute("y").toFloat(), ee.attribute("w").toFloat(), ee.attribute("h").toFloat()));
+                        m_workarea->addCut(
+                          QRectF(ee.attribute("x").toFloat(), ee.attribute("y").toFloat(),
+                                 ee.attribute("w").toFloat(), ee.attribute("h").toFloat()));
                 }
                 nn = nn.nextSibling();
             }
@@ -849,31 +911,30 @@ void Interface::openImage(const QString &filename, bool createDefaultAnimation)
     lastImagePath = QFileInfo(filename).absolutePath();
     // WorkArea Init
     m_workarea->setBackground(filename);
-    if (m_workarea->background().hasAlpha()) ui->toolCutAuto->setEnabled(true);
+    if (m_workarea->background().hasAlpha())
+        ui->toolCutAuto->setEnabled(true);
 
     // Default animation
     if (createDefaultAnimation)
-        addAnimation(trUtf8("Animation par défaut"));
+        addAnimation(tr("Animation par défaut"));
 
     // Interface
     setWindowTitle("Sprite Decomposer - 100%");
 }
 
-Animation* Interface::addAnimation(const QString &title)
+Animation *Interface::addAnimation(const QString &title)
 {
     auto *animation = new Animation(this);
     animation->setTitle(title);
     animation->setBackground(m_workarea->background());
     m_animations.append(animation);
 
-
-    //run/stop/pause should work on all-at-once animations...damn, a bit usable by resources
+    // run/stop/pause should work on all-at-once animations...damn, a bit usable by resources
     connect(ui->viewer_I_Play, SIGNAL(toggled(bool)), animation, SLOT(playAnimation(bool)));
     connect(ui->viewer_I_First, SIGNAL(clicked()), animation, SLOT(showFirstFrame()));
     connect(ui->viewer_I_Previous, SIGNAL(clicked()), animation, SLOT(showPreviousFrame()));
     connect(ui->viewer_I_Next, SIGNAL(clicked()), animation, SLOT(showNextFrame()));
     connect(ui->viewer_I_Last, SIGNAL(clicked()), animation, SLOT(showLastFrame()));
-
 
     // Interface
     ui->animation_I_List->addItem(title);
@@ -897,7 +958,8 @@ void Interface::removeAnimation(int index)
     {
         Animation *toRemove = m_animations.at(index);
 
-        if (toRemove == m_workarea->animation()) m_workarea->removeAnimation();
+        if (toRemove == m_workarea->animation())
+            m_workarea->removeAnimation();
 
         m_animations.removeAt(index);
         delete toRemove;
@@ -929,7 +991,7 @@ void Interface::showCutGridInfo(Cut *cut)
 
 void Interface::closeAll()
 {
-    for (const auto& m_animation : m_animations)
+    for (const auto &m_animation : m_animations)
         delete m_animation;
     m_animations.clear();
 
@@ -948,19 +1010,18 @@ void Interface::fillLanguages()
     m_languages = ui->menuLangue;
 
     // make a group of language actions
-    auto* actions = new QActionGroup(this);
+    auto *actions = new QActionGroup(this);
 
     QStringList tmp = Application::availableLanguages();
     tmp.sort(Qt::CaseInsensitive);
 
-    for (const auto& avail : tmp)
+    for (const auto &avail : tmp)
     {
         // figure out nice names for locales
         QLocale locale(avail);
         QString language = QLocale::languageToString(locale.language());
         auto action = m_languages->addAction(language);
-        connect(action, &QAction::toggled, this, [avail, this]()
-        {
+        connect(action, &QAction::toggled, this, [avail, this]() {
             Application::setLanguage(avail);
             retranslate();
         });
@@ -1009,10 +1070,11 @@ void Interface::selectAnimation(int index)
 
         animation->disconnect(SIGNAL(frameCountUpdated(int)));
 
-
         connect(animation, SIGNAL(frameCountUpdated(int)), this, SLOT(frameCountUpdated(int)));
-        connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), m_workarea, SLOT(setAnimationTitle(QString)));
-        connect(ui->animation_I_Speed, SIGNAL(valueChanged(int)), animation, SLOT(setSpeed(int)), Qt::UniqueConnection);
+        connect(ui->animation_I_Title, SIGNAL(textChanged(QString)), m_workarea,
+                SLOT(setAnimationTitle(QString)));
+        connect(ui->animation_I_Speed, SIGNAL(valueChanged(int)), animation, SLOT(setSpeed(int)),
+                Qt::UniqueConnection);
     }
     else
     {
@@ -1029,4 +1091,3 @@ void Interface::selectAnimation(int index)
         ui->animation_I_Speed->setEnabled(false);
     }
 }
-

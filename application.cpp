@@ -1,22 +1,23 @@
+#include "application.h"
+
 #include <QDir>
 #include <QFileInfo>
 #include <QTranslator>
-#include "application.h"
 
-QTranslator* Application::current = nullptr;
+QTranslator *Application::current = nullptr;
 Translators Application::translators;
 
-Application::Application(int& argc, char* argv[])
-    : QApplication(argc, argv)
+Application::Application(int &argc, char *argv[]) :
+    QApplication(argc, argv)
 {
 }
 
-void Application::loadTranslations(const QString& dir)
+void Application::loadTranslations(const QString &dir)
 {
     loadTranslations(QDir(dir));
 }
 
-void Application::loadTranslations(const QDir& dir)
+void Application::loadTranslations(const QDir &dir)
 {
     // <language>_<country>.qm
     QString filter = "*_*.qm";
@@ -28,10 +29,10 @@ void Application::loadTranslations(const QDir& dir)
         // pick country and language out of the file name
         QStringList parts = file.baseName().split("_");
         QString language = parts.at(parts.count() - 2).toLower();
-        QString country  = parts.at(parts.count() - 1).toUpper();
+        QString country = parts.at(parts.count() - 1).toUpper();
 
         // construct and load translator
-        auto* translator = new QTranslator(instance());
+        auto *translator = new QTranslator(instance());
         if (translator->load(file.absoluteFilePath()))
         {
             QString locale = language + "_" + country;
@@ -46,7 +47,7 @@ const QStringList Application::availableLanguages()
     return QStringList(translators.keys());
 }
 
-void Application::setLanguage(const QString& locale)
+void Application::setLanguage(const QString &locale)
 {
     // remove previous
     if (current)

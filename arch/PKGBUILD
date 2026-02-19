@@ -2,31 +2,42 @@
 
 pkgname=sprite-decomposer
 pkgver=0.6.0
-pkgrel=9
+pkgrel=10
 pkgdesc="Decompose and create animations from a sprite sheet easily."
 
 provides=('sprite-decomposer')
 
 #not sure, this one may work on arm too ...but never tried
 arch=('i686' 'x86_64' 'arm')
-url="git://github.com/alexzk1/sprite_decompose"
+url="https://github.com/alexzk1/sprite_decompose"
 
 license=('MIT')
-depends=(qt5-base )
-source=(git://github.com/alexzk1/sprite_decompose)
+#depends=(qt5-base )
+source=("repo::git+$url.git")
 md5sums=('SKIP')
 
 build() {
-  cd $srcdir/sprite_decompose
-  qmake-qt5 SpriteDecomposer.pro -spec linux-g++
-  make || return 1
+  cd "$srcdir/repo"
+  # Проверяем, что у пользователя уже установлено в системе
+  if qmake6 -query QT_VERSION >/dev/null 2>&1; then
+    _qmake="qmake6"
+  elif qmake-qt5 -query QT_VERSION >/dev/null 2>&1; then
+    _qmake="qmake-qt5"
+  else
+    echo "Could not find qt6 or qt5."
+    return 1
+  fi
+
+  echo "Using $_qmake"
+  $_qmake SpriteDecomposer.pro -spec linux-g++
+  make
 }
 
 package() {
   cd $srcdir/sprite_decompose
   install -D -m755 SpriteDecomposer $pkgdir/usr/bin/sprite_decomposer
-  
+
   install -d $pkgdir/usr/share/applications
-  install -m644 $srcdir/sprite_decompose/arch/sprite_decomposer.desktop $pkgdir/usr/share/applications  
+  install -m644 $srcdir/sprite_decompose/arch/sprite_decomposer.desktop $pkgdir/usr/share/applications
   install -m644 $srcdir/sprite_decompose/SpriteDecomposer.icns $pkgdir/usr/share/applications
 }

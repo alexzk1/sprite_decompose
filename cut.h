@@ -28,18 +28,17 @@ Under the following conditions:
 #ifndef CUT_H
 #define CUT_H
 
-#include <QGraphicsWidget>
+#include <QDebug>
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsWidget>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
-#include <QGraphicsSceneMouseEvent>
-
-#include <QDebug>
 
 class Cut : public QGraphicsWidget
 {
     Q_OBJECT
-public:
+  public:
     // Constructor
     explicit Cut(const QRectF &geometry, int row = 1, int column = 1);
 
@@ -66,8 +65,8 @@ public:
     QRect cutFrame(int index) const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-protected:
-    bool m_ready;           // Cut is ready to be used with magnetism
+  protected:
+    bool m_ready; // Cut is ready to be used with magnetism
     int m_row;
     int m_column;
 };

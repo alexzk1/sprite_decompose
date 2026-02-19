@@ -43,8 +43,14 @@ RESOURCES += menu.qrc \
 TRANSLATIONS = lang/fr_fr.ts \
             lang/en_us.ts
 
-QMAKE_CXXFLAGS +=  -std=c++14 -Wall -frtti -fexceptions -Werror=return-type
-QMAKE_CXXFLAGS +=-Werror=overloaded-virtual
+lessThan(QT_MAJOR_VERSION, 6) {
+    CONFIG += c++14
+} else {
+    CONFIG += c++17
+}
+
+QMAKE_CXXFLAGS +=  -Wall -frtti -fexceptions -Werror=return-type
+QMAKE_CXXFLAGS +=  -Werror=overloaded-virtual
 QMAKE_CXXFLAGS +=  -Wctor-dtor-privacy -Werror=delete-non-virtual-dtor -fstrict-aliasing
 QMAKE_CXXFLAGS +=  -Werror=strict-aliasing -Wstrict-aliasing=2
 QMAKE_CXXFLAGS +=  -Wno-warning=gnu-statement-expression

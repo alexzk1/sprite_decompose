@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1002</width>
-    <height>810</height>
+    <width>1411</width>
+    <height>869</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,11 +21,11 @@
    <locale language="French" country="Belgium"/>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+   <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="margin" stdset="0">
      <number>5</number>
     </property>
     <item row="0" column="0">
@@ -51,16 +51,13 @@
        </brush>
       </property>
       <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
       <property name="cacheMode">
-       <set>QGraphicsView::CacheBackground</set>
+       <set>QGraphicsView::CacheModeFlag::CacheBackground</set>
       </property>
       <property name="viewportUpdateMode">
-       <enum>QGraphicsView::BoundingRectViewportUpdate</enum>
-      </property>
-      <property name="optimizationFlags">
-       <set>QGraphicsView::DontAdjustForAntialiasing|QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState|QGraphicsView::IndirectPainting</set>
+       <enum>QGraphicsView::ViewportUpdateMode::BoundingRectViewportUpdate</enum>
       </property>
      </widget>
     </item>
@@ -71,8 +68,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1002</width>
-     <height>22</height>
+     <width>1411</width>
+     <height>34</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -117,7 +114,7 @@
     <bool>false</bool>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftToolBarArea</set>
+    <set>Qt::ToolBarArea::LeftToolBarArea</set>
    </property>
    <property name="iconSize">
     <size>
@@ -147,8 +144,8 @@
   <widget class="QDockWidget" name="dockTools">
    <property name="minimumSize">
     <size>
-     <width>315</width>
-     <height>285</height>
+     <width>512</width>
+     <height>307</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -158,10 +155,10 @@
     </size>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetVerticalTitleBar</set>
+    <set>QDockWidget::DockWidgetFeature::DockWidgetClosable|QDockWidget::DockWidgetFeature::DockWidgetVerticalTitleBar</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::RightDockWidgetArea</set>
+    <set>Qt::DockWidgetArea::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Outils</string>
@@ -171,7 +168,7 @@
    </attribute>
    <widget class="QWidget" name="dockToolsContents">
     <layout class="QGridLayout" name="gridLayout_3">
-     <property name="margin">
+     <property name="margin" stdset="0">
       <number>0</number>
      </property>
      <item row="0" column="0">
@@ -186,13 +183,13 @@
         </size>
        </property>
        <property name="tabPosition">
-        <enum>QTabWidget::North</enum>
+        <enum>QTabWidget::TabPosition::North</enum>
        </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
        <property name="elideMode">
-        <enum>Qt::ElideRight</enum>
+        <enum>Qt::TextElideMode::ElideRight</enum>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -237,7 +234,7 @@
               <string>L</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -254,7 +251,7 @@
               <string>H</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -275,7 +272,7 @@
               <string>X</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -292,7 +289,7 @@
               <string>Y</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -334,7 +331,7 @@
          <item row="4" column="0">
           <spacer name="cutRect_PushUp">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -361,7 +358,7 @@
          <item row="0" column="0" colspan="2">
           <widget class="QCheckBox" name="cutGrid_I_Magnetism">
            <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
+            <enum>Qt::LayoutDirection::LeftToRight</enum>
            </property>
            <property name="text">
             <string>Magnétisme</string>
@@ -416,7 +413,6 @@
              <property name="font">
               <font>
                <pointsize>13</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -431,7 +427,7 @@
               <string>L</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -451,7 +447,7 @@
               <string>H</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -461,7 +457,7 @@
               <bool>false</bool>
              </property>
              <property name="buttonSymbols">
-              <enum>QAbstractSpinBox::UpDownArrows</enum>
+              <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
              </property>
              <property name="maximum">
               <number>9999</number>
@@ -473,7 +469,7 @@
          <item row="3" column="0" colspan="4">
           <widget class="Line" name="line">
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="lineWidth">
             <number>2</number>
@@ -482,7 +478,7 @@
             <number>1</number>
            </property>
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -494,7 +490,7 @@
               <string>L</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -511,7 +507,7 @@
               <string>H</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -532,14 +528,14 @@
               <string>X</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QSpinBox" name="cutGrid_I_X">
              <property name="buttonSymbols">
-              <enum>QAbstractSpinBox::UpDownArrows</enum>
+              <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
              </property>
              <property name="maximum">
               <number>99999</number>
@@ -552,7 +548,7 @@
               <string>Y</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -590,7 +586,7 @@
          <item row="7" column="2">
           <spacer name="cutGrid_PushUp">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -635,7 +631,7 @@
               <number>3</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -648,13 +644,13 @@
               <bool>false</bool>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
              <property name="readOnly">
               <bool>true</bool>
              </property>
              <property name="buttonSymbols">
-              <enum>QAbstractSpinBox::NoButtons</enum>
+              <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
              </property>
              <property name="suffix">
               <string notr="true">px</string>
@@ -693,7 +689,7 @@
               <bool>false</bool>
              </property>
              <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextUnderIcon</enum>
+              <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
              </property>
             </widget>
            </item>
@@ -719,7 +715,7 @@
               <bool>false</bool>
              </property>
              <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextUnderIcon</enum>
+              <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
              </property>
             </widget>
            </item>
@@ -728,10 +724,10 @@
          <item row="2" column="0">
           <spacer name="cutAuto_PushUp">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
+            <enum>QSizePolicy::Policy::Expanding</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -755,7 +751,7 @@
          <string>Repère</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_5">
-         <property name="margin">
+         <property name="margin" stdset="0">
           <number>0</number>
          </property>
          <item row="0" column="0" colspan="3">
@@ -776,7 +772,6 @@
           <widget class="QLabel" name="mark_L_Horizontal">
            <property name="font">
             <font>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -791,7 +786,7 @@
             <string>Y</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -802,7 +797,6 @@
           <widget class="QLabel" name="mark_L_Vertical">
            <property name="font">
             <font>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -817,7 +811,7 @@
             <string>X</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -834,7 +828,7 @@
          <item row="4" column="1">
           <spacer name="mark_PushUp">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -882,7 +876,7 @@
            <item>
             <spacer name="picker_PushRight">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -898,7 +892,7 @@
               <string>#</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -926,7 +920,7 @@
               <number>6</number>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
              <property name="placeholderText">
               <string/>
@@ -956,7 +950,7 @@
          <item row="1" column="0">
           <spacer name="picker_PushUp">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -1440,7 +1434,7 @@
          <item row="6" column="1">
           <spacer name="verticalSpacer">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -1459,10 +1453,10 @@
   </widget>
   <widget class="QDockWidget" name="dockViewer">
    <property name="features">
-    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetVerticalTitleBar</set>
+    <set>QDockWidget::DockWidgetFeature::DockWidgetClosable|QDockWidget::DockWidgetFeature::DockWidgetVerticalTitleBar</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::RightDockWidgetArea</set>
+    <set>Qt::DockWidgetArea::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Visualisateur</string>
@@ -1481,10 +1475,7 @@
         </size>
        </property>
        <property name="viewportUpdateMode">
-        <enum>QGraphicsView::SmartViewportUpdate</enum>
-       </property>
-       <property name="optimizationFlags">
-        <set>QGraphicsView::DontAdjustForAntialiasing|QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState|QGraphicsView::IndirectPainting</set>
+        <enum>QGraphicsView::ViewportUpdateMode::SmartViewportUpdate</enum>
        </property>
       </widget>
      </item>
@@ -1508,7 +1499,7 @@
      <item row="2" column="1" rowspan="2">
       <spacer name="viewer_PushUp">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Orientation::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -1647,10 +1638,10 @@
   </widget>
   <widget class="QDockWidget" name="dockAnimation">
    <property name="features">
-    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetVerticalTitleBar</set>
+    <set>QDockWidget::DockWidgetFeature::DockWidgetClosable|QDockWidget::DockWidgetFeature::DockWidgetVerticalTitleBar</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::RightDockWidgetArea</set>
+    <set>Qt::DockWidgetArea::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Animation</string>
@@ -1660,7 +1651,7 @@
    </attribute>
    <widget class="QWidget" name="dockAnimationContents">
     <layout class="QGridLayout" name="gridLayout_8">
-     <property name="margin">
+     <property name="margin" stdset="0">
       <number>5</number>
      </property>
      <item row="0" column="0" colspan="3">
@@ -1741,7 +1732,7 @@
           <string>0</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -1777,7 +1768,7 @@
      <item row="4" column="2">
       <spacer name="animation_PushUp">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Orientation::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -1793,7 +1784,7 @@
   <widget class="QDockWidget" name="dockSequence">
    <property name="minimumSize">
     <size>
-     <width>212</width>
+     <width>243</width>
      <height>170</height>
     </size>
    </property>
@@ -1801,10 +1792,10 @@
     <bool>false</bool>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
+    <set>QDockWidget::DockWidgetFeature::DockWidgetClosable|QDockWidget::DockWidgetFeature::DockWidgetFloatable</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::BottomDockWidgetArea</set>
+    <set>Qt::DockWidgetArea::BottomDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Séquence</string>
@@ -1814,7 +1805,7 @@
    </attribute>
    <widget class="QWidget" name="dockSequenceContents">
     <layout class="QGridLayout" name="gridLayout_9">
-     <property name="margin">
+     <property name="margin" stdset="0">
       <number>0</number>
      </property>
      <item row="0" column="0" colspan="4">
@@ -1823,7 +1814,7 @@
      <item row="1" column="0">
       <spacer name="sequence_PushRight">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -1849,17 +1840,17 @@
         </size>
        </property>
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item row="1" column="3">
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
+        <enum>QSizePolicy::Policy::Fixed</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>

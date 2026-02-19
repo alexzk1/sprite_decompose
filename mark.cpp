@@ -1,6 +1,7 @@
 #include "mark.h"
 
-Mark::Mark(MarkOrientation orientation, int position, int sceneWidth, int sceneHeight, QGraphicsItem *parent) :
+Mark::Mark(MarkOrientation orientation, int position, int sceneWidth, int sceneHeight,
+           QGraphicsItem *parent) :
     QGraphicsObject(parent)
 {
     m_orientation = orientation;
@@ -42,7 +43,7 @@ void Mark::setSceneSize(int width, int height)
  */
 QRectF Mark::boundingRect() const
 {
-    return QRectF(beginPoint(),endPoint()).adjusted(-1,-1,1,1);
+    return QRectF(beginPoint(), endPoint()).adjusted(-1, -1, 1, 1);
 }
 
 void Mark::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -52,10 +53,10 @@ void Mark::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     QPen pen;
     pen.setStyle(Qt::SolidLine);
-    pen.setColor(QColor(180,0,0));
+    pen.setColor(QColor(180, 0, 0));
 
     painter->setPen(pen);
-    painter->drawLine(beginPoint(),endPoint());
+    painter->drawLine(beginPoint(), endPoint());
 }
 
 /*
@@ -63,15 +64,15 @@ void Mark::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
  */
 QPoint Mark::beginPoint() const
 {
-    if(m_orientation == MarkHorizontal)
-        return QPoint(0,m_position);
+    if (m_orientation == MarkHorizontal)
+        return QPoint(0, m_position);
     else
-        return QPoint(m_position,0);
+        return QPoint(m_position, 0);
 }
 QPoint Mark::endPoint() const
 {
-    if(m_orientation == MarkHorizontal)
-        return QPoint(m_sceneWidth,m_position);
+    if (m_orientation == MarkHorizontal)
+        return QPoint(m_sceneWidth, m_position);
     else
-        return QPoint(m_position,m_sceneHeight);
+        return QPoint(m_position, m_sceneHeight);
 }

@@ -28,31 +28,41 @@ Under the following conditions:
 #ifndef WORKAREA_H
 #define WORKAREA_H
 
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QBitmap>
-#include <QPixmap>
-#include <QKeyEvent>
-#include <QRubberBand>
-#include <functional>
-#include <QPointer>
 #include "animation.h"
 #include "cut.h"
 #include "mark.h"
 
+#include <QBitmap>
 #include <QDebug>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QKeyEvent>
+#include <QPixmap>
+#include <QPointer>
+#include <QRubberBand>
+
+#include <functional>
 
 class Interface;
 
 class WorkArea : public QGraphicsScene
 {
-    Q_OBJECT Q_ENUMS(Tool)
-    Q_ENUMS(CutType)
+  Q_OBJECT Q_ENUMS(Tool) Q_ENUMS(CutType)
 
-public:
-    enum Tool {ToolNormal, ToolCutRect, ToolCutGrid, ToolMarkH, ToolMarkV, ToolPicker, ToolCutAuto};
-    enum CutType {TypeCutRect, TypeCutGrid};
+    public : enum Tool {
+        ToolNormal,
+        ToolCutRect,
+        ToolCutGrid,
+        ToolMarkH,
+        ToolMarkV,
+        ToolPicker,
+        ToolCutAuto
+    };
+    enum CutType {
+        TypeCutRect,
+        TypeCutGrid
+    };
 
     // Constructor / Destructor
     explicit WorkArea(Interface *interface, QObject *parent = nullptr);
@@ -60,10 +70,10 @@ public:
     // Setter
     void setBackground(const QString &filename);
     void setTool(WorkArea::Tool tool);
-    void setAnimation(Animation* animation);
+    void setAnimation(Animation *animation);
     // Getter
     QPixmap background() const;
-    Animation* animation();
+    Animation *animation();
 
     // Mouse Event
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -75,52 +85,52 @@ public:
 
     // Public Methods
     void setMaskColor(QRgb color);
-    Mark* addMark(int position, Mark::MarkOrientation orientation);
+    Mark *addMark(int position, Mark::MarkOrientation orientation);
 
-    Cut* addCut(const QRectF &geometry, WorkArea::CutType cutType = TypeCutRect);
-    void deleteCut(Cut* cut);
+    Cut *addCut(const QRectF &geometry, WorkArea::CutType cutType = TypeCutRect);
+    void deleteCut(Cut *cut);
 
     void removeAnimation();
 
-private:
+  private:
     void refreshAll();
     void autoCut(const QRect &area);
 
-private:
+  private:
     Interface *m_interface;
-    QGraphicsView *m_view;              // Interface view for this workarea
-    QPixmap m_background{};               // Background image (sprite sheet)
-    QPixmap m_background_masked{};        // Background with mask
-    QGraphicsItem* m_backgroundItem{nullptr};    // Background Item
-    Tool m_tool;                        // Actual tool mode
-    QPointer<Animation> m_animation{nullptr};             // Current Animation
-    QPointer<Cut> m_currentDrawing{nullptr};              // Current Cut Drawing
-    QPointer<Mark> m_currentMark{nullptr};                // Current Mark Positionning
-    QPointF m_originDrawing;            // Origin Drawing
+    QGraphicsView *m_view;                    // Interface view for this workarea
+    QPixmap m_background{};                   // Background image (sprite sheet)
+    QPixmap m_background_masked{};            // Background with mask
+    QGraphicsItem *m_backgroundItem{nullptr}; // Background Item
+    Tool m_tool;                              // Actual tool mode
+    QPointer<Animation> m_animation{nullptr}; // Current Animation
+    QPointer<Cut> m_currentDrawing{nullptr};  // Current Cut Drawing
+    QPointer<Mark> m_currentMark{nullptr};    // Current Mark Positionning
+    QPointF m_originDrawing;                  // Origin Drawing
 
     // Selection
-    QList<QGraphicsItem*> m_selectedCuts;         // List of Selected Cuts
-    QRubberBand *m_selectionRect;       // Draw a selection rectangle
-    QPoint m_selectionOrigin;           // Origin of selection rectangle
-    bool isSelecting;                   // Selection in progress
-    QGraphicsItemGroup *m_selectionGroup;   // Item contains all selected cuts
+    QList<QGraphicsItem *> m_selectedCuts; // List of Selected Cuts
+    QRubberBand *m_selectionRect;          // Draw a selection rectangle
+    QPoint m_selectionOrigin;              // Origin of selection rectangle
+    bool isSelecting;                      // Selection in progress
+    QGraphicsItemGroup *m_selectionGroup;  // Item contains all selected cuts
 
-    QList<QPointer<Mark>> m_marks{};               // Marks list
+    QList<QPointer<Mark>> m_marks{}; // Marks list
     // Cut Grid Params
-    int m_cutGrid_row;                  // Interface Row Param
-    int m_cutGrid_column;               // Interface Column Param
+    int m_cutGrid_row;    // Interface Row Param
+    int m_cutGrid_column; // Interface Column Param
     // Cut Auto Params
-    int m_cutAuto_tolerance;            // AutoCut tolerance
-    bool m_constraintHeight,            // Force all auto cut to have same height
-         m_constraintWidth;             // Force all auto cut to have same width
-    void inline forEachCut(const std::function<void(Cut*)>& pred) const;
-signals:
+    int m_cutAuto_tolerance; // AutoCut tolerance
+    bool m_constraintHeight, // Force all auto cut to have same height
+      m_constraintWidth;     // Force all auto cut to have same width
+    void inline forEachCut(const std::function<void(Cut *)> &pred) const;
+  signals:
     // To Interface
     void pickerColor(QRgb color);
-    void itemSelected(Cut* selection);
+    void itemSelected(Cut *selection);
     void multipleSelection();
 
-public slots:
+  public slots:
     // From Interface
     void setItemWidth(int width);
     void setItemHeight(int height);
@@ -161,7 +171,6 @@ public slots:
     void setAnimationTitle(const QString &title);
 
     void deleteSelection();
-
 };
 
 #endif // WORKAREA_H
